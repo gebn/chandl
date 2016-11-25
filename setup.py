@@ -36,5 +36,10 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Topic :: Utilities'
-    ]
+    ],
+    entry_points={
+        'console_scripts': [
+            'chandl = chandl.__main__:main',
+        ]
+    }
 )
