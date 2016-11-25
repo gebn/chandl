@@ -23,7 +23,7 @@ setup(
     license='MIT',
     url='https://github.com/gebn/chandl',
     author='George Brighton',
-    author_email='os@gebn.co.uk',
+    author_email='oss@gebn.co.uk',
     packages=find_packages(),
     install_requires=[
         'six'
