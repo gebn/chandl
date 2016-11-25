@@ -35,7 +35,7 @@ Usage
 
 ::
 
-    $ python -m chandl -h
+    $ chandl -h
     usage: chandl [-h] [-c] [-t THREADS] [-v] url [url ...]
 
     A lightweight tool for parsing and downloading 4chan threads.
