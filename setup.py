@@ -19,7 +19,7 @@ setup(
     name='chandl',
     version='0.0.3',
     description='A lightweight tool for parsing and downloading 4chan threads.',
-    long_description=_read_file('README.md'),
+    long_description=_read_file('README.rst'),
     license='MIT',
     url='https://github.com/gebn/chandl',
     author='George Brighton',

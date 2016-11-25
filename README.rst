@@ -1,29 +1,39 @@
-# chandl
+chandl
+======
 
-[![PyPI](https://img.shields.io/pypi/v/chandl.svg)](https://pypi.python.org/pypi/chandl)
-![MIT License](https://img.shields.io/pypi/l/chandl.svg)
+.. image:: https://img.shields.io/pypi/v/chandl.svg
+   :target: https://pypi.python.org/pypi/chandl
 
 A lightweight tool for parsing and downloading 4chan threads.
 
-## Features
+Features
+--------
 
- - An API for programmatically analysing 4chan content.
- - Customise the each file name using a lambda function.
- - Filter out images or videos.
- - Concurrent downloading, with parallelism linked to the number of cores.
+-  An API for programmatically analysing 4chan content.
+-  Customise the each file name using a lambda function.
+-  Filter out images or videos.
+-  Concurrent downloading, with parallelism linked to the number of
+   cores.
 
-## Dependencies
+Dependencies
+------------
 
- - Python 2.7.x, 3.4.x or 3.5.x
- - six
+-  Python 2.7, 3.4 or 3.5
+-  six
 
-## Installation
+Installation
+------------
 
-To install `chandl`, simply run:
+To install ``chandl``, simply run:
+
+::
 
     $ pip install chandl
 
-## Usage
+Usage
+-----
+
+::
 
     $ python -m chandl -h
     usage: chandl [-h] [-c] [-t THREADS] [-v] url [url ...]
@@ -40,7 +50,7 @@ To install `chandl`, simply run:
                             the maximum number of download threads to use per core
       -v, --verbosity       increase output verbosity
 
-## Roadmap
+Roadmap
+-------
 
- - Check compatibility
- - Add tests and CI
+-  Add tests and CI
