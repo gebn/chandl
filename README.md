@@ -1,4 +1,7 @@
-# Chandl
+# chandl
+
+[![PyPI](https://img.shields.io/pypi/v/chandl.svg)](https://pypi.python.org/pypi/chandl)
+![MIT License](https://img.shields.io/pypi/l/chandl.svg)
 
 A lightweight tool for parsing and downloading 4chan threads.
 
@@ -12,7 +15,13 @@ A lightweight tool for parsing and downloading 4chan threads.
 ## Dependencies
 
  - Python 2.7.x, 3.4.x or 3.5.x
- - six (bundled)
+ - six
+
+## Installation
+
+To install `chandl`, simply run:
+
+    $ pip install chandl
 
 ## Usage
 
@@ -35,4 +44,3 @@ A lightweight tool for parsing and downloading 4chan threads.
 
  - Check compatibility
  - Add tests and CI
- - List on pip and remove bundled dependencies
