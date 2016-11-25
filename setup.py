@@ -26,7 +26,7 @@ setup(
     author_email='oss@gebn.co.uk',
     packages=find_packages(),
     install_requires=[
-        'six'
+        'six>=1.9.0'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
