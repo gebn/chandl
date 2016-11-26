@@ -63,6 +63,7 @@ def main():
         except ValueError as e:
             # almost definitely invalid url
             print(e, file=sys.stderr)
+            return 1
 
         print('Downloading {0}'.format(
             thread.subject if thread.subject else str(thread.id)))
@@ -95,4 +96,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
