@@ -1,0 +1,7 @@
+[run]
+branch = True
+source =
+    chandl
+
+[report]
+precision = 2

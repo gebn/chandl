@@ -32,7 +32,8 @@ setup(
     ],
     test_suite='nose.collector',
     tests_require=[
-        'nose'
+        'nose',
+        'coveralls'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
