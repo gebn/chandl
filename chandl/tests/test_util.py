@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from unittest import TestCase
+import unittest
 import sys
 import os
 import six
@@ -9,7 +9,7 @@ import logging
 from chandl import util
 
 
-class TestBytesFmt(TestCase):
+class TestBytesFmt(unittest.TestCase):
 
     _TRIALS = {
         32242: '31.5 KiB',
@@ -29,19 +29,29 @@ class TestBytesFmt(TestCase):
             self.assertEqual(util.bytes_fmt(number), formatted)
 
 
-class TestDecodeCliArg(TestCase):
+class TestDecodeCliArg(unittest.TestCase):
+
+    _ARG_VALUE = 'test_arg_value'
 
     def test_empty(self):
         with self.assertRaises(ValueError):
             util.decode_cli_arg(None)
 
+    @unittest.skipUnless(sys.version_info.major == 2,
+                         'Only applies to Python 2')
     def test_valid(self):
-        arg = u'test_arg_value'
         self.assertEqual(
-            util.decode_cli_arg(arg.encode(sys.getfilesystemencoding())), arg)
+            util.decode_cli_arg(
+                self._ARG_VALUE.encode(sys.getfilesystemencoding())),
+            self._ARG_VALUE)
+
+    @unittest.skipUnless(sys.version_info.major == 3,
+                         'Only applies to Python 3')
+    def test_valid(self):
+        self.assertEqual(util.decode_cli_arg(self._ARG_VALUE), self._ARG_VALUE)
 
 
-class TestMakeFilename(TestCase):
+class TestMakeFilename(unittest.TestCase):
 
     _NO_CHANGE = ['file_name.jpg',
                   'File name2.png',
@@ -79,7 +89,7 @@ class TestMakeFilename(TestCase):
             self.assertEqual(util.make_filename(original), mutated)
 
 
-class TestMd5File(TestCase):
+class TestMd5File(unittest.TestCase):
 
     _TESTS_DIRECTORY = os.path.join(os.path.dirname(__file__), 'md5_tests')
 
@@ -97,7 +107,7 @@ class TestMd5File(TestCase):
             self.assertEqual(util.md5_file(path), os.path.basename(path))
 
 
-class TestLogLevelFromVerbosity(TestCase):
+class TestLogLevelFromVerbosity(unittest.TestCase):
 
     def test_warning(self):
         self.assertEqual(util.log_level_from_vebosity(0), logging.WARNING)
