@@ -33,6 +33,7 @@ setup(
     test_suite='nose.collector',
     tests_require=[
         'nose',
+        'coverage',
         'coveralls'
     ],
     classifiers=[
