@@ -15,7 +15,8 @@ class TestBytesFmt(TestCase):
         0: '0.0 B',
         -1: '1.0 B',
         1024: '1.0 KiB',
-        1024 * 1024: '1.0 MiB'
+        1024 * 1024: '1.0 MiB',
+        1024 * 2 ** 70: '1.0 YiB'
     }
 
     def test_none(self):
