@@ -40,7 +40,7 @@ def main():
                         type=int,
                         help='the maximum number of download threads to use '
                              'per core',
-                        default=5)
+                        default=2)
     parser.add_argument('-v', '--verbosity',
                         help='increase output verbosity',
                         action='count',
