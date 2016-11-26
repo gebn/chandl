@@ -9,4 +9,5 @@ script:
  - pip install coverage
  - coverage run setup.py test
 after_success:
+ - pip install coveralls
  - coveralls
