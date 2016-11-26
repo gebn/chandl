@@ -53,5 +53,4 @@ Roadmap
 -------
 
 -  Improve test coverage
--  Auto deploy new tags to PyPI if the build passes
 -  Pylint or flake8 integration
