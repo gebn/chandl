@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from unittest import TestCase
 import copy
 
+from chandl import util
 from chandl.model.file import File
 
 
@@ -82,3 +83,13 @@ class TestFile(TestCase):
 
     def test_url(self):
         self.assertEqual(self.file.url, self._POST_VALID_FILE_URL)
+
+    def test_str(self):
+        self.assertEqual(str(self.file),
+                         'File({0}, {1}.{2}, {3}, {4}x{5})'.format(
+                             self._POST_VALID['tim'],
+                             self._POST_VALID['filename'],
+                             self._POST_VALID['ext'][1:],
+                             util.bytes_fmt(self._POST_VALID['fsize']),
+                             self._POST_VALID['w'],
+                             self._POST_VALID['h']))
