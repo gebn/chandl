@@ -26,7 +26,7 @@ class Downloader:
                          name to save it under.
         :param parallelism: The maximum number of threads to use to download
                             files per CPU. E.g. parallelism of 4 on a quad core
-                            results in 20 threads.
+                            results in 16 threads.
         """
 
         self._directory = directory

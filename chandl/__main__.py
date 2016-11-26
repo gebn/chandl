@@ -37,7 +37,7 @@ def main():
                         action='store_true',
                         default=False,
                         help='download to the working directory')
-    parser.add_argument('-t', '--threads',
+    parser.add_argument('-p', '--parallelism',
                         type=int,
                         help='the maximum number of download threads to use '
                              'per core',
@@ -81,7 +81,7 @@ def main():
 
         dl = Downloader(directory,
                         lambda image: str(image.id) + '.' + image.extension,
-                        parallelism=args.threads)
+                        parallelism=args.parallelism)
         start = datetime.now()
         dl.download(files)
         finish = datetime.now()
