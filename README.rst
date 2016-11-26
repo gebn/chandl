@@ -35,7 +35,7 @@ Usage
 ::
 
     $ chandl -h
-    usage: chandl [-h] [-c] [-t THREADS] [-v] url [url ...]
+    usage: chandl [-h] [--version] [-c] [-p PARALLELISM] [-v] url [url ...]
 
     A lightweight tool for parsing and downloading 4chan threads.
 
@@ -44,8 +44,9 @@ Usage
 
     optional arguments:
       -h, --help            show this help message and exit
+      --version             show program's version number and exit
       -c, --cwd             download to the working directory
-      -t THREADS, --threads THREADS
+      -p PARALLELISM, --parallelism PARALLELISM
                             the maximum number of download threads to use per core
       -v, --verbosity       increase output verbosity
 
