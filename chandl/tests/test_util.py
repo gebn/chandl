@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from unittest import TestCase
 import sys
 import os
@@ -85,7 +86,7 @@ class TestMd5File(TestCase):
             util.md5_file(None)
 
     def test_not_file(self):
-        with self.assertRaises(FileNotFoundError):
+        with self.assertRaises(IOError):  # no FileNotFoundError in 2.7
             util.md5_file('does_not_exist')
 
     def test_valid_hashes(self):

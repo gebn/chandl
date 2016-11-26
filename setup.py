@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import codecs
+from __future__ import unicode_literals
 from setuptools import setup, find_packages
+import codecs
 
 
 def _read_file(name, encoding='utf-8'):
@@ -26,7 +27,12 @@ setup(
     author_email='oss@gebn.co.uk',
     packages=find_packages(),
     install_requires=[
-        'six>=1.9.0'
+        'six>=1.9.0',
+        'Unidecode'
+    ],
+    test_suite='nose.collector',
+    tests_require=[
+        'nose'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
