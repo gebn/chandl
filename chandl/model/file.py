@@ -49,18 +49,14 @@ class File:
         self.md5 = md5
 
     @property
-    def url(self, secure=True):
+    def url(self):
         """
         Retrieve the URL where this file can be downloaded.
 
-        :param secure: Whether or not to generate an HTTPS link.
-                       True by default.
         :return: The URL.
         """
-
-        protocol = 'https' if secure else 'http'
-        return '{0}://i.4cdn.org/{1}/{2}.{3}'.format(protocol, self.board,
-                                                     self.id, self.extension)
+        return 'https://i.4cdn.org/{0}/{1}.{2}'.format(self.board, self.id,
+                                                       self.extension)
 
     def save_to(self, directory, name_fmt, verify=True):
         """
