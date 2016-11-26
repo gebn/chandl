@@ -3,3 +3,5 @@ clean:
 	find . -type d -name "__pycache__" -delete
 	rm -rf chandl.egg-info
 	rm -rf dist
+	rm -rf .eggs
+	rm -f .coverage
