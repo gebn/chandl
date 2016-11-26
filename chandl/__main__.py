@@ -66,7 +66,7 @@ def main():
 
         print('Downloading {0}'.format(
             thread.subject if thread.subject else str(thread.id)))
-        files = list(thread.posts.filter(Post.has_file).map(
+        files = list(thread.posts.filter(lambda p: p.has_file).map(
             lambda post: post.file))  # list() as we need to rewind
 
         if args.cwd:

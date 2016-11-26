@@ -30,6 +30,7 @@ class Post:
         self.body = body
         self.file = file_
 
+    @property
     def has_file(self):
         """
         Find whether this post has a file.
