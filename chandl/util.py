@@ -5,6 +5,7 @@ import logging
 import sys
 import hashlib
 import unidecode
+import six
 
 
 def bytes_fmt(num, suffix='B'):
@@ -14,10 +15,10 @@ def bytes_fmt(num, suffix='B'):
     :param num: The number of bytes to convert.
     :param suffix: The unit suffix (defaults to 'B').
     :return: The human-readable equivalent of the input size.
-    :raises ValueError: If num is the wrong type.
+    :raises ValueError: If num is not an integer.
     """
 
-    if not isinstance(num, int):
+    if not isinstance(num, six.integer_types):
         raise ValueError('Byte count must be an integer')
 
     num = abs(num)
