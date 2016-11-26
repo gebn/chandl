@@ -11,7 +11,6 @@ import chandl
 from chandl import util
 from chandl.downloader import Downloader
 from chandl.model.thread import Thread
-from chandl.model.post import Post
 
 
 logger = logging.getLogger(__name__)
