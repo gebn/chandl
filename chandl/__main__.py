@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, print_function
+from __future__ import unicode_literals, print_function, division
 import sys
 import os
 import argparse
@@ -91,7 +91,7 @@ def main():
         print('Downloaded {0} in {1:0.3f} seconds ({2}/s)'.format(
             util.bytes_fmt(size),
             delta.total_seconds(),
-            util.bytes_fmt(size / delta.total_seconds())))
+            util.bytes_fmt(int(size // delta.total_seconds()))))
 
 
 if __name__ == '__main__':

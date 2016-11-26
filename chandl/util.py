@@ -19,7 +19,7 @@ def bytes_fmt(num, suffix='B'):
     """
 
     if not isinstance(num, six.integer_types):
-        raise ValueError('Byte count must be an integer')
+        raise ValueError('Byte count must be an integral type')
 
     num = abs(num)
     for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
