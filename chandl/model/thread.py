@@ -75,11 +75,13 @@ class Thread:
                              for post in json_['posts']]))
 
     @staticmethod
-    def from_url(url):
+    def from_url(url, secure=True):
         """
         Construct a thread instance from its URL.
 
         :param url: The URL of the thread to retrieve.
+        :param secure: Whether or not to retrieve the board using a secure
+                       connection.
         :return: The created thread instance.
         """
 
@@ -89,8 +91,9 @@ class Thread:
             raise ValueError('Invalid thread URL: {0}'.format(url))
 
         # download the JSON
-        api_url = 'https://a.4cdn.org/{0}/thread/{1}.json'.format(
-            result.group(1), result.group(2))
+        protocol = 'https' if secure else 'http'
+        api_url = '{0}://a.4cdn.org/{1}/thread/{2}.json'.format(
+            protocol, result.group(1), result.group(2))
         logger.debug('Retrieving JSON from %s', api_url)
         with contextlib.closing(request.urlopen(api_url)) as response:
             # urllib doesn't decode for us, which confuses json
