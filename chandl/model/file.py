@@ -30,7 +30,7 @@ class File:
 
         :param id_: A unique identifier for the file: it's UNIX timestamp
                     prepended to the number of milliseconds.
-        :param board: The board this file was posted in, e.g. 'gif'.
+        :param board: The board this file was posted in, e.g. 'wg'.
         :param name: The original name of the file.
         :param extension: The file's extension, without leading dot.
         :param size: The size of the file in bytes.
@@ -89,7 +89,8 @@ class File:
         """
         Create a file object from 4Chan's API format.
 
-        :param board: The board this file was uploaded to.
+        :param board: The name of the board this file was uploaded to, e.g.
+                      'wg'.
         :param json: The JSON of the post containing this file.
         :return: The created file instance.
         :raises ValueError: If the post does not contain an image.
