@@ -7,6 +7,7 @@ import argparse
 import logging
 from datetime import datetime
 
+import chandl
 from chandl import util
 from chandl.downloader import Downloader
 from chandl.model.thread import Thread
@@ -29,6 +30,9 @@ def main():
                         type=util.decode_cli_arg,
                         help='the URL(s) of the thread(s) whose files to '
                              'download')
+    parser.add_argument('--version',
+                        action='version',
+                        version='%(prog)s ' + chandl.__version__)
     parser.add_argument('-c', '--cwd',
                         action='store_true',
                         default=False,

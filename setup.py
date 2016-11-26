@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 from setuptools import setup, find_packages
 import codecs
 
+import chandl
+
 
 def _read_file(name, encoding='utf-8'):
     """
@@ -18,7 +20,7 @@ def _read_file(name, encoding='utf-8'):
 
 setup(
     name='chandl',
-    version='0.1.0',
+    version=chandl.__version__,
     description='A lightweight tool for parsing and downloading 4chan threads.',
     long_description=_read_file('README.rst'),
     license='MIT',
