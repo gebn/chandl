@@ -17,12 +17,6 @@ Features
 -  Concurrent downloading, with parallelism linked to the number of
    cores.
 
-Dependencies
-------------
-
--  Python 2.7, 3.4 or 3.5
--  six
-
 Installation
 ------------
 
