@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import logging
 import sys
 import hashlib
+import unidecode
 
 
 def bytes_fmt(num, suffix='B'):
@@ -13,10 +14,15 @@ def bytes_fmt(num, suffix='B'):
     :param num: The number of bytes to convert.
     :param suffix: The unit suffix (defaults to 'B').
     :return: The human-readable equivalent of the input size.
+    :raises ValueError: If num is the wrong type.
     """
 
+    if not isinstance(num, int):
+        raise ValueError('Byte count must be an integer')
+
+    num = abs(num)
     for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
-        if abs(num) < 1024.0:
+        if num < 1024.0:
             return '{0:.1f} {1}{2}'.format(num, unit, suffix)
         num /= 1024.0
     return '{0:.1f} {1}{2}'.format(num, 'Yi', suffix)
@@ -28,7 +34,12 @@ def decode_cli_arg(arg):
 
     :param arg: The bytestring to decode.
     :return: The argument as a unicode object.
+    :raises ValueError: If arg is None.
     """
+
+    if arg is None:
+        raise ValueError('Argument cannot be None')
+
     return arg.decode(sys.getfilesystemencoding())
 
 
@@ -39,10 +50,18 @@ def make_filename(string):
 
     :param string: The string to convert.
     :return: The sanitised string.
+    :raises ValueError: If string is None.
     """
 
+    if string is None:
+        raise ValueError('String cannot be None')
+
     safe = [' ', '.', '_', ':']
-    return ''.join(c for c in string if c.isalnum() or c in safe).rstrip()
+    joined = ''.join([c for c in unidecode.unidecode(string)
+                      if c.isalnum() or c in safe]).strip()
+    if not joined:
+        raise ValueError('Filename would be empty')
+    return joined
 
 
 def md5_file(path):
@@ -52,10 +71,14 @@ def md5_file(path):
     :param path: The path of the file.
     :return: The 32-character long lowercase hex representation of the
              checksum.
+    :raises ValueError: If path is invalid.
     """
 
+    if not path:
+        raise ValueError('Path cannot be empty or None')
+
     hash_ = hashlib.md5()
-    with open(path, 'r') as fd:
+    with open(path, 'rb') as fd:
         for chunk in iter(lambda: fd.read(4096), b''):
             hash_.update(chunk)
     return hash_.hexdigest()
