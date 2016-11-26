@@ -41,6 +41,10 @@ def decode_cli_arg(arg):
     if arg is None:
         raise ValueError('Argument cannot be None')
 
+    if sys.version_info.major == 3:
+        # already decoded
+        return arg
+
     return arg.decode(sys.getfilesystemencoding())
 
 
