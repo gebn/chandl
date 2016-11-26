@@ -3,6 +3,8 @@ chandl
 
 .. image:: https://img.shields.io/pypi/v/chandl.svg
    :target: https://pypi.python.org/pypi/chandl
+.. image:: https://travis-ci.org/gebn/chandl.svg?branch=master
+   :target: https://travis-ci.org/gebn/chandl
 
 A lightweight tool for parsing and downloading 4chan threads.
 
