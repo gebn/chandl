@@ -52,5 +52,7 @@ Usage
 Roadmap
 -------
 
+-  Implement tracking of threads until they are deleted
+-  File exclusion
 -  Improve test coverage
 -  Pylint or flake8 integration
