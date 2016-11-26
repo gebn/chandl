@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from unittest import TestCase
 import sys
 import os
+import six
 import logging
 
 from chandl import util
@@ -24,7 +25,7 @@ class TestBytesFmt(TestCase):
             util.bytes_fmt(None)
 
     def test_trials(self):
-        for number, formatted in self._TRIALS.items():
+        for number, formatted in six.iteritems(self._TRIALS):
             self.assertEqual(util.bytes_fmt(number), formatted)
 
 
@@ -70,11 +71,11 @@ class TestMakeFilename(TestCase):
             self.assertEqual(util.make_filename(name), name)
 
     def test_modified(self):
-        for original, mutated in self._MODIFIED.items():
+        for original, mutated in six.iteritems(self._MODIFIED):
             self.assertEqual(util.make_filename(original), mutated)
 
     def test_unicode(self):
-        for original, mutated in self._UNICODE.items():
+        for original, mutated in six.iteritems(self._UNICODE):
             self.assertEqual(util.make_filename(original), mutated)
 
 
