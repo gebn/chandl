@@ -96,11 +96,11 @@ class Thread:
         api_url = '{0}://a.4cdn.org/{1}/thread/{2}.json'.format(
             protocol, result.group(1), result.group(2))
         logger.debug('Retrieving JSON from %s', api_url)
-        response = requests.get(api_url, stream=True)
+        response = requests.get(api_url)
         if response.status_code != requests.codes.ok:
             raise IOError('Request to 4chan failed with status code {0}'.format(
                 response.status_code))
-        return Thread.parse_json(result.group(1), json.load(response.raw))
+        return Thread.parse_json(result.group(1), response.json())
 
     def __str__(self):
         return 'Thread({0}, {1})'.format(self.id, self.board)
