@@ -151,10 +151,11 @@ def main():
     if not os.path.isdir(write_dir):
         try:
             os.mkdir(write_dir, 0o700)
-        except IOError as e:
+        except OSError as e:
             _print_error(
                 'Failed to create the thread directory at {0}: {1}'.format(
                     write_dir, e))
+            return 3
 
     # download the files
     downloader = Downloader(write_dir, args.name, args.parallelism)
