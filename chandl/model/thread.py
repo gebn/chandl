@@ -2,9 +2,7 @@
 from __future__ import unicode_literals
 
 import logging
-import contextlib
 import re
-import json
 import six
 import requests
 
