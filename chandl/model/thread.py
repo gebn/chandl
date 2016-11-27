@@ -6,7 +6,7 @@ import contextlib
 import re
 import json
 import six
-from six.moves.urllib import request
+import requests
 
 from chandl.model.posts import Posts
 from chandl.model.post import Post
@@ -83,6 +83,7 @@ class Thread:
         :param secure: Whether or not to retrieve the board using a secure
                        connection.
         :return: The created thread instance.
+        :raises IOError: If the thread could not be retrieved from 4chan.
         """
 
         # extract the board and thread ids
@@ -95,10 +96,11 @@ class Thread:
         api_url = '{0}://a.4cdn.org/{1}/thread/{2}.json'.format(
             protocol, result.group(1), result.group(2))
         logger.debug('Retrieving JSON from %s', api_url)
-        with contextlib.closing(request.urlopen(api_url)) as response:
-            # urllib doesn't decode for us, which confuses json
-            text = response.read().decode('utf-8')
-            return Thread.parse_json(result.group(1), json.loads(text))
+        response = requests.get(api_url, stream=True)
+        if response.status_code != requests.codes.ok:
+            raise IOError('Request to 4chan failed with status code {0}'.format(
+                response.status_code))
+        return Thread.parse_json(result.group(1), json.load(response.raw))
 
     def __str__(self):
         return 'Thread({0}, {1})'.format(self.id, self.board)

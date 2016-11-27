@@ -118,7 +118,7 @@ def main():
     try:
         logger.debug('Downloading thread')
         thread = Thread.from_url(args.url)
-    except ValueError as e:
+    except (ValueError, IOError) as e:
         _print_error('Error retrieving thread: {0}'.format(e))
         return 1
 
