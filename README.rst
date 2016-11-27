@@ -38,7 +38,7 @@ Download all files in ``<thread_url>``, to a new directory named after the threa
 
     $ chandl <thread_url>
 
-Download all images and ``.webm``s in ``<thread_url>`` to ``/dev/shm``, using 3 download threads per core:
+Download all images and ``.webm`` files in ``<thread_url>`` to ``/dev/shm``, using 3 download threads per core:
 
 ::
 
