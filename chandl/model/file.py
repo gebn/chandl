@@ -136,7 +136,7 @@ class File:
             shutil.copyfileobj(response.raw, handle)
 
         if verify and util.md5_file(destination) != self.md5:
-            raise IOError('Verify failed: checksum mismatch'.format(self))
+            raise IOError('Verify failed: checksum mismatch')
 
     @staticmethod
     def parse_json(board, json):
