@@ -29,6 +29,27 @@ To install ``chandl``, simply run:
 
     $ pip install chandl
 
+Examples
+--------
+
+Download all files in ``<thread_url>``, to a new directory named after the thread if possible, otherwise its raw id:
+
+::
+
+    $ chandl <thread_url>
+
+Download all images and ``.webm``s in ``<thread_url>`` to ``/dev/shm``, using 3 download threads per core:
+
+::
+
+    $ chandl -f images,webm -o /dev/shm -p 3 <thread_url>
+
+Download all files in ``<thread_url>``, except ``abc.jpg`` and ``def.jpg`` to the present working directory, using a custom name format:
+
+::
+
+    $ chandl -e abc.jpg,def.jpg -t . -n "{board} - {file.name}.{file.extension}" <thread_url>
+
 Usage
 -----
 
