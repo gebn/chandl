@@ -25,18 +25,18 @@ class Posts(list):
         :return: The filtered posts.
         """
 
-        return Posts(filter(predicate, self))
+        return Posts([post for post in self if predicate(post)])
 
-    def map(self, transformation):
+    def map(self, transform):
         """
         Applies a transformation function to each post, returning a list of this
         function's returned values.
 
-        :param transformation: The transformation function.
+        :param transform: The transformation function.
         :return: The transformed list of posts.
         """
 
-        return map(transformation, self)
+        return [transform(post) for post in self]
 
     def foreach(self, function):
         """
