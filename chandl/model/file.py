@@ -7,7 +7,8 @@ import sys
 import binascii
 import base64
 import six
-from six.moves.urllib import request
+import requests
+import shutil
 
 from chandl import util
 
@@ -101,28 +102,39 @@ class File:
         """
         return 'https://i.4cdn.org/{0}/{1}'.format(self.board, self.filename)
 
-    def save_to(self, directory, name, verify=True):
+    def save_to(self, directory, name, verify=True, session=None):
         """
         Download and save this file.
 
         :param directory: The directory to save this file within.
         :param name: The file name to save under.
-        :param verify: Whether to verify the file's checksum once it is written
-                       (default: true).
-        :raise IOError: If the file cannot be written, or its checksum does not
-                        match the one reported by 4Chan.
+        :param verify: Whether to verify the file's checksum once it is written.
+                       Defaults to true.
+        :param session: The requests session to use for this download. If
+                        omitted, a new session will be used.
+        :raise IOError: If the file could not be downloaded, written, or if
+                        `verify` was enabled and its checksum did not match the
+                        one reported by 4chan.
         """
 
-        # N.B. urllib doesn't handle unicode well - encode everything before
-        #      handing over
+        destination = os.path.join(directory, name)
 
-        destination = os.path.join(directory, name) \
-            .encode(sys.getfilesystemencoding())
-        if os.path.isfile(destination):
+        if os.path.isfile(destination) and \
+                util.md5_file(destination) == self.md5:
             logger.debug('%s already exists; skipping download', self)
-        else:
-            logger.debug('Downloading %s', self)
-            request.urlretrieve(self.url, destination)
+            return
+
+        logger.debug('Downloading %s', self)
+        if not session:
+            session = requests
+        response = session.get(self.url, stream=True)
+        if response.status_code != requests.codes.ok:
+            raise IOError('File failed to download with status {0}'.format(
+                response.status_code))
+
+        with open(destination, 'wb') as handle:
+            shutil.copyfileobj(response.raw, handle)
+
         if verify and util.md5_file(destination) != self.md5:
             raise IOError('Verify failed: checksum mismatch'.format(self))
 

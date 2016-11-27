@@ -12,9 +12,10 @@ import contextlib
 import six
 import datetime
 import os
+import requests
+from progress.bar import Bar
 
 from chandl import util
-from progress.bar import Bar
 
 
 logger = logging.getLogger(__name__)
@@ -142,26 +143,29 @@ class Downloader:
 
         :param self: The downloader instance the thread belongs to.
         """
+
+        session = requests.Session()
         while not _interrupted:
             try:
                 post_ = self._queue.popleft()
-                Downloader.handle(self, post_)
+                Downloader.handle(self, post_, session)
             except IndexError:
                 # no items left to process - let function return
                 break
 
     @staticmethod
-    def handle(self, post_):
+    def handle(self, post_, session):
         """
         Downloads the file in a post.
 
         :param self: The downloader context.
         :param post_: The post to download.
+        :param session: The requests session to use for the download.
         """
 
         try:
             name = self._name_fmt.format(**post_.__dict__)
-            post_.file.save_to(self._directory, name)
+            post_.file.save_to(self._directory, name, session=session)
             with self._lock:
                 self._completed_jobs.append(post_)
         except IOError as e:
