@@ -166,4 +166,6 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    status = main()
+    logger.debug('Exiting with status %d', status)
+    sys.exit(status)
