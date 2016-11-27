@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import logging
 import os
-import sys
 import binascii
 import base64
 import six
