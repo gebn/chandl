@@ -13,7 +13,6 @@ class Posts(list):
 
         :param args: The list of posts.
         """
-
         super(Posts, self).__init__(*args)
 
     def filter(self, predicate):
@@ -24,7 +23,6 @@ class Posts(list):
                           cut.
         :return: The filtered posts.
         """
-
         return Posts([post for post in self if predicate(post)])
 
     def map(self, transform):
@@ -35,7 +33,6 @@ class Posts(list):
         :param transform: The transformation function.
         :return: The transformed list of posts.
         """
-
         return [transform(post) for post in self]
 
     def foreach(self, function):
@@ -45,6 +42,5 @@ class Posts(list):
         :param function: A function taking a post argument. Return values are
         ignored.
         """
-
         for post in self:
             function(post)

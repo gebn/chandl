@@ -17,7 +17,6 @@ def bytes_fmt(num, suffix='B'):
     :return: The human-readable equivalent of the input size.
     :raises ValueError: If num is not an integer.
     """
-
     if not isinstance(num, six.integer_types):
         raise ValueError('Byte count must be an integral type')
 
@@ -37,7 +36,6 @@ def decode_cli_arg(arg):
     :return: The argument as a unicode object.
     :raises ValueError: If arg is None.
     """
-
     if arg is None:
         raise ValueError('Argument cannot be None')
 
@@ -71,7 +69,6 @@ def make_filename(string):
     :return: The sanitised string.
     :raises ValueError: If string is None.
     """
-
     if string is None:
         raise ValueError('String cannot be None')
 
@@ -92,7 +89,6 @@ def md5_file(path):
              checksum.
     :raises ValueError: If path is invalid.
     """
-
     if not path:
         raise ValueError('Path cannot be empty or None')
 
@@ -110,7 +106,6 @@ def log_level_from_vebosity(verbosity):
     :param verbosity: The number of times the `-v` option was specified.
     :return: The corresponding log level.
     """
-
     if verbosity == 0:
         return logging.WARNING
     if verbosity == 1:

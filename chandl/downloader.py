@@ -126,7 +126,6 @@ class Downloader:
                             files per CPU. E.g. parallelism of 4 on a quad core
                             results in 16 threads.
         """
-
         self._directory = directory
         self._name_fmt = name_fmt
         self._threads = multiprocessing.cpu_count() * parallelism
@@ -143,7 +142,6 @@ class Downloader:
 
         :param self: The downloader instance the thread belongs to.
         """
-
         session = requests.Session()
         while not _interrupted:
             try:
@@ -162,7 +160,6 @@ class Downloader:
         :param post_: The post to download.
         :param session: The requests session to use for the download.
         """
-
         try:
             name = self._name_fmt.format(**post_.__dict__)
             post_.file.save_to(self._directory, name, session=session)
@@ -177,7 +174,6 @@ class Downloader:
 
         :param posts: The posts to add.
         """
-
         for post_ in posts:
             self._queue.append(post_)
 
@@ -188,7 +184,6 @@ class Downloader:
         :param posts: An iterable containing the posts to download. They will
                       be downloaded in order.
         """
-
         global _interrupted
         _interrupted = False
 

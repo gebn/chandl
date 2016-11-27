@@ -29,7 +29,6 @@ class Thread:
         :param slug: The thread's URL fragment.
         :param posts: Posts within this thread.
         """
-
         self.board = board
         self.id = id_
         self.subject = subject
@@ -45,7 +44,6 @@ class Thread:
                        Defaults to true.
         :return: The URL.
         """
-
         protocol = 'https' if secure else 'http'
         return '{0}://boards.4chan.org/{1}/thread/{2}/{3}'.format(
             protocol, self.board, self.id, self.slug)
@@ -59,7 +57,6 @@ class Thread:
         :param json_: The thread's parsed JSON as a dictionary.
         :return: The created thread instance.
         """
-
         if not json_['posts']:
             raise ValueError('A thread must contain at least one post')
 
@@ -83,7 +80,6 @@ class Thread:
         :return: The created thread instance.
         :raises IOError: If the thread could not be retrieved from 4chan.
         """
-
         # extract the board and thread ids
         result = re.search('boards\.4chan\.org/([a-z]+)/thread/([0-9]+)', url)
         if not result:

@@ -37,7 +37,6 @@ def expand_filters(filters):
     :param filters: The list of filters from argparse.
     :return: A set of file extensions.
     """
-
     extensions = set()
 
     for arg in filters:  # "videos, jpg"
@@ -73,7 +72,6 @@ class File:
         :param height: The height of the media in pixels.
         :param md5: The MD5 hash of the file as a 32-character string.
         """
-
         self.id = id_
         self.board = board
         self.name = name[:30]  # the length of some file names causes problems
@@ -115,7 +113,6 @@ class File:
                         `verify` was enabled and its checksum did not match the
                         one reported by 4chan.
         """
-
         destination = os.path.join(directory, name)
 
         if os.path.isfile(destination) and \
@@ -156,7 +153,6 @@ class File:
             :return: The unicode representation of the unpacked, 32-character
                      checksum.
             """
-
             return binascii.hexlify(
                 base64.b64decode(encoded.encode('ascii'))).decode('ascii')
 

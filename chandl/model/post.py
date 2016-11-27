@@ -23,7 +23,6 @@ class Post:
         :param body: The body of this post, if one exists.
         :param file_: This post's file, if one exists.
         """
-
         self.board = board
         self.id = id_
         self.timestamp = timestamp
@@ -37,7 +36,6 @@ class Post:
 
         :return: True if it does, false otherwise.
         """
-
         return self.file is not None
 
     @staticmethod
@@ -49,7 +47,6 @@ class Post:
         :param json: The post's parsed JSON as a dictionary.
         :return: The created post instance.
         """
-
         file_ = File.parse_json(board, json) if 'tim' in json else None
         comment = json['com'] if 'com' in json else None
         return Post(board, json['no'], datetime.utcfromtimestamp(json['time']),
