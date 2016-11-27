@@ -12,10 +12,45 @@ from six.moves.urllib import request
 from chandl import util
 
 
-logger = logging.getLogger(__name__)
-
 TYPE_VIDEO = ['webm', 'gif']
 TYPE_IMAGE = ['jpg', 'png']
+
+# passable via the CLI's --filter option
+_FILTERS = {
+    'videos': TYPE_VIDEO,
+    'images': TYPE_IMAGE
+}
+
+logger = logging.getLogger(__name__)
+
+
+def expand_filters(filters):
+    """
+    Expand a list of file filters passed on the command line. Each item could be
+    a csv or single file extension, or key in the _FILTERS dict above, in which
+    case it needs to be expanded into file extensions. Examples:
+
+        ['jpg', 'webm'] -> jpg, webm
+        ['jpg, webm', 'png'] -> jpg, webm, png
+        ['webm,images'] -> webm, jpg, png
+
+    :param filters: The list of filters from argparse.
+    :return: A set of file extensions.
+    """
+
+    extensions = set()
+
+    for arg in filters:  # "videos, jpg"
+        for type_ in [s.strip() for s in arg.split(',')]:  # "videos"|"jpg"
+            if type_ in _FILTERS:  # "videos"
+                for ext in _FILTERS[type_]:
+                    # return each extension in that category
+                    extensions.add(ext)
+            else:  # "jpg"
+                # it's a file extension - just return it
+                extensions.add(type_)
+
+    return extensions
 
 
 @six.python_2_unicode_compatible
@@ -49,22 +84,29 @@ class File:
         self.md5 = md5
 
     @property
+    def filename(self):
+        """
+        Get the name of this file as it appears on the 4chan website.
+
+        :return: This file's id with extension.
+        """
+        return six.u(str(self.id)) + '.' + self.extension
+
+    @property
     def url(self):
         """
         Retrieve the URL where this file can be downloaded.
 
         :return: The URL.
         """
-        return 'https://i.4cdn.org/{0}/{1}.{2}'.format(self.board, self.id,
-                                                       self.extension)
+        return 'https://i.4cdn.org/{0}/{1}'.format(self.board, self.filename)
 
-    def save_to(self, directory, name_fmt, verify=True):
+    def save_to(self, directory, name, verify=True):
         """
         Download and save this file.
 
         :param directory: The directory to save this file within.
-        :param name_fmt: A function taking this instance and returning a file
-                         name.
+        :param name: The file name to save under.
         :param verify: Whether to verify the file's checksum once it is written
                        (default: true).
         :raise IOError: If the file cannot be written, or its checksum does not
@@ -74,12 +116,12 @@ class File:
         # N.B. urllib doesn't handle unicode well - encode everything before
         #      handing over
 
-        destination = os.path.join(directory, name_fmt(self))\
+        destination = os.path.join(directory, name) \
             .encode(sys.getfilesystemencoding())
         if os.path.isfile(destination):
-            logger.info('%s already exists; skipping download', self)
+            logger.debug('%s already exists; skipping download', self)
         else:
-            logger.info('Downloading %s', self)
+            logger.debug('Downloading %s', self)
             request.urlretrieve(self.url, destination)
         if verify and util.md5_file(destination) != self.md5:
             raise IOError('Verify failed: checksum mismatch'.format(self))

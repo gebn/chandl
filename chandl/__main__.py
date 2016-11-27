@@ -5,46 +5,103 @@ import sys
 import os
 import argparse
 import logging
-from datetime import datetime
 
 import chandl
 from chandl import util
 from chandl.downloader import Downloader
 from chandl.model.thread import Thread
+from chandl.model import file
 
 
 logger = logging.getLogger(__name__)
 
 
-def main():
+def _print_error(msg):
     """
-    Chandl entry point.
+    Print a string to stderr.
+
+    :param msg: The message to print.
     """
+    print(msg, file=sys.stderr)
+
+
+def _construct_parser():
     parser = argparse.ArgumentParser(prog='chandl',
                                      description='A lightweight tool for '
                                                  'parsing and downloading '
                                                  '4chan threads.')
-    parser.add_argument('url',
-                        nargs='+',
-                        type=util.decode_cli_arg,
-                        help='the URL(s) of the thread(s) whose files to '
-                             'download')
-    parser.add_argument('--version',
+    parser.add_argument('-V', '--version',
                         action='version',
                         version='%(prog)s ' + chandl.__version__)
-    parser.add_argument('-c', '--cwd',
-                        action='store_true',
-                        default=False,
-                        help='download to the working directory')
-    parser.add_argument('-p', '--parallelism',
-                        type=int,
-                        help='the maximum number of download threads to use '
-                             'per core',
-                        default=2)
     parser.add_argument('-v', '--verbosity',
                         help='increase output verbosity',
                         action='count',
                         default=0)
+    parser.add_argument('-f', '--filter',
+                        help='file types or extensions to download, value '
+                             'either comma-separated or option passed multiple '
+                             'times',
+                        action='append',
+                        type=util.decode_cli_arg,
+                        nargs='?')
+    parser.add_argument('-e', '--exclude',
+                        help='file names to exclude, value either '
+                             'comma-separated or option passed multiple times',
+                        action='append',
+                        type=util.decode_cli_arg,
+                        nargs='?')
+    parser.add_argument('-o', '--output-dir',
+                        help='the directory to create the `thread-dir` within',
+                        nargs='?',
+                        type=util.decode_cli_arg,
+                        default=os.getcwd())
+    parser.add_argument('-t', '--thread-dir',
+                        help='relative to the `output-dir`, this will contain '
+                             'downloaded files',
+                        type=util.decode_cli_arg,
+                        nargs='?')
+    parser.add_argument('-n', '--name',
+                        help='the format to use for downloaded file names',
+                        nargs='?',
+                        type=util.decode_cli_arg,
+                        default='{file.id} - {file.name}.{file.extension}')
+    parser.add_argument('-p', '--parallelism',
+                        help='the maximum number of download threads to use '
+                             'per core',
+                        type=int,
+                        default=2)
+    parser.add_argument('url',
+                        type=util.decode_cli_arg,
+                        help='the URL of the thread to download')
+    return parser
+
+
+def _remove_unwanted(posts, args):
+
+    # filter out posts without a file
+    posts = posts.filter(lambda post: post.has_file)
+    logger.debug('%d contain a file', len(posts))
+
+    # filter out files of the wrong type
+    if args.filter:
+        extensions = file.expand_filters(args.filter)
+        posts = posts.filter(lambda post: post.file.extension in extensions)
+    logger.debug('%d are also of the desired format', len(posts))
+
+    # filter out excluded file names
+    filenames = util.expand_cli_args(args.exclude or [])
+    posts = posts.filter(lambda post: post.file.name not in filenames)
+    logger.debug('%d have also not been excluded', len(posts))
+
+    return posts
+
+
+def main():
+    """
+    chandl's command-line entry point.
+    """
+
+    parser = _construct_parser()
     args = parser.parse_args()
 
     # sort out logging output and level
@@ -56,42 +113,54 @@ def main():
     handler.setFormatter(logging.Formatter('%(levelname)s %(message)s'))
     root.addHandler(handler)
 
-    for url in args.url:
-        try:
-            thread = Thread.from_url(url)
-        except ValueError as e:
-            # almost definitely invalid url
-            print(e, file=sys.stderr)
-            return 1
+    logger.debug(args)
 
-        print('Downloading {0}'.format(
-            thread.subject if thread.subject else str(thread.id)))
-        files = list(thread.posts.filter(lambda p: p.has_file).map(
-            lambda post: post.file))  # list() as we need to rewind
+    try:
+        logger.debug('Downloading thread')
+        thread = Thread.from_url(args.url)
+    except ValueError as e:
+        _print_error('Error retrieving thread: {0}'.format(e))
+        return 1
 
-        if args.cwd:
-            directory = os.getcwd()
-        else:
-            directory = util.make_filename(thread.subject) if thread.subject \
+    posts = thread.posts
+    logger.debug('Thread contains %d posts', len(posts))
+
+    posts = _remove_unwanted(posts, args)
+    logger.debug('Will download %d posts', len(posts))
+
+    # check whether we still have anything to do
+    if not posts:
+        print('All files are either filtered out or excluded')
+        return 0
+
+    # use the first post to validate the --name
+    try:
+        post = posts[0]
+        args.name.format(**post.__dict__)
+    except KeyError as e:
+        _print_error('Invalid file name specifier: {0}'.format(e))
+        return 2
+
+    # determine an appropriate thread_dir if one was not specified
+    if not args.thread_dir:
+        args.thread_dir = util.make_filename(thread.subject) if thread.subject \
                 else str(thread.id)
-            if not os.path.exists(directory):
-                os.mkdir(directory)
 
-        logger.debug('Downloading to %s', directory)
+    # create --thread-dir
+    write_dir = os.path.join(args.output_dir, args.thread_dir)
+    if not os.path.isdir(write_dir):
+        try:
+            os.mkdir(write_dir, 0o700)
+        except IOError as e:
+            _print_error(
+                'Failed to create the thread directory at {0}: {1}'.format(
+                    write_dir, e))
 
-        dl = Downloader(directory,
-                        lambda image: str(image.id) + '.' + image.extension,
-                        parallelism=args.parallelism)
-        start = datetime.now()
-        dl.download(files)
-        finish = datetime.now()
+    # download the files
+    downloader = Downloader(write_dir, args.name, args.parallelism)
+    print(downloader.download(posts))
 
-        size = sum([file_.size for file_ in files])
-        delta = finish - start
-        print('Downloaded {0} in {1:0.3f} seconds ({2}/s)'.format(
-            util.bytes_fmt(size),
-            delta.total_seconds(),
-            util.bytes_fmt(int(size // delta.total_seconds()))))
+    return 0
 
 
 if __name__ == '__main__':

@@ -35,25 +35,38 @@ Usage
 ::
 
     $ chandl -h
-    usage: chandl [-h] [--version] [-c] [-p PARALLELISM] [-v] url [url ...]
+    usage: chandl [-h] [-V] [-v] [-f [FILTER]] [-e [EXCLUDE]] [-o [OUTPUT_DIR]]
+                  [-t [THREAD_DIR]] [-n [NAME]] [-p PARALLELISM]
+                  url
 
     A lightweight tool for parsing and downloading 4chan threads.
 
     positional arguments:
-      url                   the URL(s) of the thread(s) whose files to download
+      url                   the URL of the thread to download
 
     optional arguments:
       -h, --help            show this help message and exit
-      --version             show program's version number and exit
-      -c, --cwd             download to the working directory
+      -V, --version         show program's version number and exit
+      -v, --verbosity       increase output verbosity
+      -f [FILTER], --filter [FILTER]
+                            file types or extensions to download, value either
+                            comma-separated or option passed multiple times
+      -e [EXCLUDE], --exclude [EXCLUDE]
+                            file names to exclude, value either comma-separated or
+                            option passed multiple times
+      -o [OUTPUT_DIR], --output-dir [OUTPUT_DIR]
+                            the directory to create the `thread-dir` within
+      -t [THREAD_DIR], --thread-dir [THREAD_DIR]
+                            relative to the `output-dir`, this will contain
+                            downloaded files
+      -n [NAME], --name [NAME]
+                            the format to use for downloaded file names
       -p PARALLELISM, --parallelism PARALLELISM
                             the maximum number of download threads to use per core
-      -v, --verbosity       increase output verbosity
 
 Roadmap
 -------
 
 -  Implement tracking of threads until they are deleted
--  File exclusion
 -  Improve test coverage
 -  Pylint or flake8 integration

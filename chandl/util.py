@@ -48,6 +48,20 @@ def decode_cli_arg(arg):
     return arg.decode(sys.getfilesystemencoding())
 
 
+def expand_cli_args(args):
+    """
+    Expand a list of possibly comma separated arguments, removing duplicates.
+
+    :param args: The list of arguments to expand.
+    :return: The set of unique arguments.
+    """
+    items = set()
+    for arg in args:  # "a.jpg,b.png"
+        for arg_ in [n.strip() for n in arg.split(',')]:  # "a.jpg"|"b.jpg"
+            items.add(arg_)
+    return items
+
+
 def make_filename(string):
     """
     Turn a string into something that can be safely used as a file or directory

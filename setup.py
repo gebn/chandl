@@ -30,7 +30,8 @@ setup(
     packages=find_packages(),
     install_requires=[
         'six>=1.9.0',
-        'Unidecode'
+        'Unidecode',
+        'progress'
     ],
     test_suite='nose.collector',
     tests_require=[
