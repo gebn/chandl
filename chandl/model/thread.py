@@ -71,13 +71,14 @@ class Thread:
                              for post in json_['posts']]))
 
     @staticmethod
-    def from_url(url, secure=True):
+    def from_url(url, secure=True, session=None):
         """
         Construct a thread instance from its URL.
 
         :param url: The URL of the thread to retrieve.
         :param secure: Whether or not to retrieve the board using a secure
                        connection.
+        :param session: The requests session to use to send the request.
         :return: The created thread instance.
         :raises IOError: If the thread could not be retrieved from 4chan.
         """
@@ -86,12 +87,18 @@ class Thread:
         if not result:
             raise ValueError('Invalid thread URL: {0}'.format(url))
 
-        # download the JSON
+        # construct a session if necessary
+        if not session:
+            session = util.create_session()
+
+        # determine the URL
         protocol = 'https' if secure else 'http'
         api_url = '{0}://a.4cdn.org/{1}/thread/{2}.json'.format(
             protocol, result.group(1), result.group(2))
+
+        # download the JSON
         logger.debug('Retrieving JSON from %s', api_url)
-        response = util.create_session().get(api_url)
+        response = session.get(api_url)
         if response.status_code != requests.codes.ok:
             raise IOError('Request to 4chan failed with status code {0}'.format(
                 response.status_code))
