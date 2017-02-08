@@ -6,6 +6,7 @@ import os
 import six
 import logging
 
+import chandl
 from chandl import util
 
 
@@ -141,3 +142,12 @@ class TestLogLevelFromVerbosity(unittest.TestCase):
     def test_debug(self):
         self.assertEqual(util.log_level_from_vebosity(2), logging.DEBUG)
         self.assertEqual(util.log_level_from_vebosity(None), logging.DEBUG)
+
+
+class TestCreateSession(unittest.TestCase):
+
+    def test_user_agent(self):
+        session = util.create_session()
+        self.assertIn('User-Agent', session.headers)
+        self.assertEqual(session.headers['User-Agent'],
+                         'chandl/' + chandl.__version__)
