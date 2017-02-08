@@ -51,6 +51,29 @@ class TestDecodeCliArg(unittest.TestCase):
         self.assertEqual(util.decode_cli_arg(self._ARG_VALUE), self._ARG_VALUE)
 
 
+class TestExpandCliArgs(unittest.TestCase):
+
+    def test_empty(self):
+        self.assertEqual(util.expand_cli_args([]),
+                         set())
+
+    def test_strip(self):
+        self.assertEqual(util.expand_cli_args(['  abc,  def ']),
+                         {'abc', 'def'})
+
+    def test_csv(self):
+        self.assertEqual(util.expand_cli_args(['ghi,jkl , klm']),
+                         {'ghi', 'jkl', 'klm'})
+
+    def test_mixed(self):
+        self.assertEqual(util.expand_cli_args(['nop', 'qrs,tuv']),
+                         {'nop', 'qrs', 'tuv'})
+
+    def test_duplicates(self):
+        self.assertEqual(util.expand_cli_args(['wxyz', 'wxyz,wxyz']),
+                         {'wxyz'})
+
+
 class TestMakeFilename(unittest.TestCase):
 
     _NO_CHANGE = ['file_name.jpg',
