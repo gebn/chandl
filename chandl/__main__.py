@@ -158,7 +158,8 @@ def main():
             return 3
 
     # download the files
-    print('Saving thread to {0}'.format(write_dir))
+    print('Saving thread to \'{0}\''.format(os.path.relpath(write_dir,
+                                                            os.getcwd())))
     downloader = Downloader(write_dir, args.name, args.parallelism)
     print(downloader.download(posts))
 
