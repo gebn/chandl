@@ -6,6 +6,7 @@ import re
 import six
 import requests
 
+from chandl import util
 from chandl.model.posts import Posts
 from chandl.model.post import Post
 
@@ -90,7 +91,7 @@ class Thread:
         api_url = '{0}://a.4cdn.org/{1}/thread/{2}.json'.format(
             protocol, result.group(1), result.group(2))
         logger.debug('Retrieving JSON from %s', api_url)
-        response = requests.get(api_url)
+        response = util.create_session().get(api_url)
         if response.status_code != requests.codes.ok:
             raise IOError('Request to 4chan failed with status code {0}'.format(
                 response.status_code))

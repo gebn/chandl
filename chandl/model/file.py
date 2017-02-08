@@ -122,7 +122,7 @@ class File:
 
         logger.debug('Downloading %s', self)
         if not session:
-            session = requests
+            session = util.create_session()
         response = session.get(self.url, stream=True)
         if response.status_code != requests.codes.ok:
             raise IOError('File failed to download with status {0}'.format(

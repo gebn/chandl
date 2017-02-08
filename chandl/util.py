@@ -6,6 +6,9 @@ import sys
 import hashlib
 import unidecode
 import six
+import requests
+
+import chandl
 
 
 def bytes_fmt(num, suffix='B'):
@@ -111,3 +114,19 @@ def log_level_from_vebosity(verbosity):
     if verbosity == 1:
         return logging.INFO
     return logging.DEBUG
+
+
+def create_session():
+    """
+    Create a requests session for issuing HTTP requests to 4chan.
+
+    :return: The created session.
+    """
+    headers = requests.utils.default_headers()
+    headers.update({
+        'User-Agent': 'chandl/' + chandl.__version__
+    })
+
+    session = requests.Session()
+    session.headers = headers
+    return session
