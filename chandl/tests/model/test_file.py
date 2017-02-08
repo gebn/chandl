@@ -1,13 +1,40 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from unittest import TestCase
+import unittest
 import copy
 
 from chandl import util
-from chandl.model.file import File
+from chandl.model import file
 
 
-class TestFile(TestCase):
+class TestExpandFilters(unittest.TestCase):
+
+    def test_empty(self):
+        self.assertEqual(file.expand_filters([]), set())
+
+    def test_duplicates(self):
+        self.assertEqual(file.expand_filters(['webm', 'jpg', 'webm']),
+                         {'webm', 'jpg'})
+
+    def test_expand_type(self):
+        self.assertEqual(file.expand_filters(file._FILTERS['videos']),
+                         set(file.TYPE_VIDEO))
+
+    def test_csv(self):
+        self.assertEqual(file.expand_filters(['webm,jpg,webm', 'png,jpg']),
+                         {'webm', 'jpg', 'png'})
+
+    def test_strip(self):
+        self.assertEqual(file.expand_filters(['webm  ', ' jpg', '   webm']),
+                         {'webm', 'jpg'})
+
+    def test_mixed(self):
+        self.assertEqual(file.expand_filters(['webm , gif ', ' jpg,png',
+                                              '   gif,webm,videos']),
+                         set(['webm', 'gif', 'jpg', 'png'] + file.TYPE_VIDEO))
+
+
+class TestFile(unittest.TestCase):
 
     _BOARD = 'wg'
 
@@ -44,7 +71,7 @@ class TestFile(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.file = File.parse_json(cls._BOARD, cls._POST_VALID)
+        cls.file = file.File.parse_json(cls._BOARD, cls._POST_VALID)
 
     def test_id(self):
         self.assertEqual(self.file.id, self._POST_VALID['tim'])
@@ -59,8 +86,8 @@ class TestFile(TestCase):
         filename = 'long' * 10
         file_json = copy.copy(self._POST_VALID)
         file_json['filename'] = filename
-        file = File.parse_json(self._BOARD, file_json)
-        self.assertEqual(file.name, filename[:30])
+        file_ = file.File.parse_json(self._BOARD, file_json)
+        self.assertEqual(file_.name, filename[:30])
 
     def test_extension(self):
         self.assertEqual(self.file.extension, self._POST_VALID['ext'][1:])
@@ -79,7 +106,7 @@ class TestFile(TestCase):
 
     def test_parse_json_no_file(self):
         with self.assertRaises(ValueError):
-            File.parse_json(self._BOARD, self._POST_NO_FILE)
+            file.File.parse_json(self._BOARD, self._POST_NO_FILE)
 
     def test_url(self):
         self.assertEqual(self.file.url, self._POST_VALID_FILE_URL)
