@@ -209,7 +209,7 @@ class Downloader:
         bar = Bar('Downloading',
                   max=job_count,
                   suffix='%(index)d/%(max)d - '
-                         '%(elapsed)ds elapsed, %(eta)ds remaining')
+                         '%(elapsed_td)s elapsed, %(eta_td)s remaining')
         with _redirect_sigint():
             while self._queue and not _interrupted:
                 bar.goto(job_count - len(self._queue))
