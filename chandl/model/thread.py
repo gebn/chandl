@@ -37,17 +37,14 @@ class Thread:
         self.posts = posts
 
     @property
-    def url(self, secure=True):
+    def url(self):
         """
         Generate a link where this thread can be viewed.
 
-        :param secure: Whether or not to generate an HTTPS link.
-                       Defaults to true.
         :return: The URL.
         """
-        protocol = 'https' if secure else 'http'
-        return '{0}://boards.4chan.org/{1}/thread/{2}/{3}'.format(
-            protocol, self.board, self.id, self.slug)
+        return 'https://boards.4chan.org/{0}/thread/{1}/{2}'.format(
+            self.board, self.id, self.slug)
 
     @staticmethod
     def parse_json(board, json_):
@@ -71,13 +68,11 @@ class Thread:
                              for post in json_['posts']]))
 
     @staticmethod
-    def from_url(url, secure=True, session=None):
+    def from_url(url, session=None):
         """
         Construct a thread instance from its URL.
 
         :param url: The URL of the thread to retrieve.
-        :param secure: Whether or not to retrieve the board using a secure
-                       connection.
         :param session: The requests session to use to send the request.
         :return: The created thread instance.
         :raises IOError: If the thread could not be retrieved from 4chan.
@@ -92,9 +87,8 @@ class Thread:
             session = util.create_session()
 
         # determine the URL
-        protocol = 'https' if secure else 'http'
-        api_url = '{0}://a.4cdn.org/{1}/thread/{2}.json'.format(
-            protocol, result.group(1), result.group(2))
+        api_url = 'https://a.4cdn.org/{0}/thread/{1}.json'.format(
+            result.group(1), result.group(2))
 
         # download the JSON
         logger.debug('Retrieving JSON from %s', api_url)
