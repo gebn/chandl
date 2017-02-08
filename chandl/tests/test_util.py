@@ -39,7 +39,7 @@ class TestDecodeCliArg(unittest.TestCase):
 
     @unittest.skipUnless(sys.version_info.major == 2,
                          'Only applies to Python 2')
-    def test_valid(self):
+    def test_valid_2(self):
         self.assertEqual(
             util.decode_cli_arg(
                 self._ARG_VALUE.encode(sys.getfilesystemencoding())),
@@ -47,7 +47,7 @@ class TestDecodeCliArg(unittest.TestCase):
 
     @unittest.skipUnless(sys.version_info.major == 3,
                          'Only applies to Python 3')
-    def test_valid(self):
+    def test_valid_3(self):
         self.assertEqual(util.decode_cli_arg(self._ARG_VALUE), self._ARG_VALUE)
 
 
