@@ -5,6 +5,7 @@ import copy
 
 from chandl import util
 from chandl.model import file
+from chandl.model.file import File
 
 
 class TestExpandFilters(unittest.TestCase):
@@ -36,8 +37,6 @@ class TestExpandFilters(unittest.TestCase):
 
 class TestFile(unittest.TestCase):
 
-    _BOARD = 'wg'
-
     _POST_NO_FILE = {
         'no': 1978945,
         'now': '11/23/16(Wed)04:52:24',
@@ -48,30 +47,43 @@ class TestFile(unittest.TestCase):
         'resto': 1978004
     }
 
+    _BOARD = 'wg'
+    _ID = 6840627
+
     _POST_VALID = {
-        'no': 1978935,
-        'now': '11/23/16(Wed)03:54:11',
-        'name': 'Anonymous',
-        'com': '<a href=\"#p1978934\" class=\"quotelink\">&gt;&gt;1978934</a>'
-               '<br>4/?',
-        'filename': '026 - 9pVmOxz',
+        'bumplimit': 0,
+        'com': 'No more, no less',
         'ext': '.jpg',
-        'w': 1000,
-        'h': 1415,
-        'tn_w': 88,
-        'tn_h': 125,
-        'tim': 1479891251942,
-        'time': 1479891251,
-        'md5': 'mvAriHSBFWBZr6yQ5c15lg==',
-        'fsize': 787710,
-        'resto': 1978004
+        'filename': 'IMG_5433',
+        'fsize': 35649,
+        'h': 768,
+        'imagelimit': 0,
+        'images': 12,
+        'md5': '56yiIJJgznhqupf3uu2xuA==',
+        'name': 'Anonymous',
+        'no': 6840627,
+        'now': '02/02/17(Thu)01:25:15',
+        'replies': 20,
+        'resto': 0,
+        'semantic_url': 'monty-python-papes',
+        'sub': 'Monty Python Papes',
+        'tim': 1486016715106,
+        'time': 1486016715,
+        'tn_h': 140,
+        'tn_w': 250,
+        'unique_ips': 18,
+        'w': 1366
     }
-    _POST_VALID_FILE_MD5 = '9af02b887481156059afac90e5cd7996'
-    _POST_VALID_FILE_URL = 'https://i.4cdn.org/wg/1479891251942.jpg'
+
+    _POST_VALID_FILE_MD5 = 'e7aca2209260ce786aba97f7baedb1b8'
+    _POST_VALID_FILE_URL = 'https://i.4cdn.org/wg/1486016715106.jpg'
 
     @classmethod
     def setUpClass(cls):
-        cls.file = file.File.parse_json(cls._BOARD, cls._POST_VALID)
+        cls.file = File(cls._POST_VALID['tim'], cls._BOARD,
+                        cls._POST_VALID['filename'], cls._POST_VALID['ext'][1:],
+                        cls._POST_VALID['fsize'], cls._POST_VALID['w'],
+                        cls._POST_VALID['h'], cls._POST_VALID_FILE_MD5)
 
     def test_id(self):
         self.assertEqual(self.file.id, self._POST_VALID['tim'])
@@ -86,7 +98,7 @@ class TestFile(unittest.TestCase):
         filename = 'long' * 10
         file_json = copy.copy(self._POST_VALID)
         file_json['filename'] = filename
-        file_ = file.File.parse_json(self._BOARD, file_json)
+        file_ = File.parse_json(self._BOARD, file_json)
         self.assertEqual(file_.name, filename[:30])
 
     def test_extension(self):
@@ -106,7 +118,11 @@ class TestFile(unittest.TestCase):
 
     def test_parse_json_no_file(self):
         with self.assertRaises(ValueError):
-            file.File.parse_json(self._BOARD, self._POST_NO_FILE)
+            File.parse_json(self._BOARD, self._POST_NO_FILE)
+
+    def test_parse_json_file(self):
+        self.assertEqual(File.parse_json(self._BOARD, self._POST_VALID),
+                         self.file)
 
     def test_url(self):
         self.assertEqual(self.file.url, self._POST_VALID_FILE_URL)

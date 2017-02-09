@@ -163,6 +163,10 @@ class File:
                     json['ext'][1:], json['fsize'], json['w'], json['h'],
                     unpack_hash(json['md5']).rstrip())
 
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and \
+               other.__dict__ == self.__dict__
+
     def __str__(self):
         return 'File({0}, {1}.{2}, {3}, {4}x{5})'.format(
             self.id, self.name, self.extension, util.bytes_fmt(self.size),
