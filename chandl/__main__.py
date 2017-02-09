@@ -140,10 +140,9 @@ def main():
         _print_error('Invalid file name specifier: {0}'.format(e))
         return 2
 
-    # determine an appropriate thread_dir if one was not specified
+    # set an appropriate thread_dir if one was not specified
     if not args.thread_dir:
-        args.thread_dir = util.make_filename(thread.subject) if thread.subject \
-                else str(thread.id)
+        args.thread_dir = util.make_filename(thread.title)
 
     # create --thread-dir
     write_dir = os.path.join(args.output_dir, args.thread_dir)
@@ -157,8 +156,9 @@ def main():
             return 3
 
     # download the files
-    print('Saving thread to \'{0}\''.format(os.path.relpath(write_dir,
-                                                            os.getcwd())))
+    print('Saving \'{0}\' to \'{1}\''.format(thread.title,
+                                             os.path.relpath(write_dir,
+                                                             os.getcwd())))
     downloader = Downloader(write_dir, args.name, args.parallelism)
     print(downloader.download(posts))
 

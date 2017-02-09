@@ -12,7 +12,6 @@ from chandl import util
 from chandl.model.posts import Posts
 from chandl.model.post import Post
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -22,19 +21,22 @@ class Thread:
     Represents a 4Chan thread.
     """
 
-    def __init__(self, board, id_, subject, slug, posts):
+    def __init__(self, board, id_, subject, title, slug, posts):
         """
         Initialise a new thread instance.
 
         :param board: The board this thread exists within.
         :param id_: The post id of the first post in this thread.
         :param subject: The thread subject, if set.
+        :param title: A name for the thread, resolved from the subject, comment,
+                      or thread id.
         :param slug: The thread's URL fragment.
         :param posts: Posts within this thread.
         """
         self.board = board
         self.id = id_
         self.subject = subject
+        self.title = title
         self.slug = slug
         self.posts = posts
 
@@ -47,6 +49,30 @@ class Thread:
         """
         return 'https://boards.4chan.org/{0}/thread/{1}/{2}'.format(
             self.board, self.id, self.slug)
+
+    @staticmethod
+    def _find_subject(post):
+        """
+        Identifies the most appropriate name for a thread.
+
+        :param post: The first post's json.
+        :return: A string containing the thread's resolved subject.
+        """
+        parser = HTMLParser()
+
+        # if the post has a subject, it's easy
+        if 'sub' in post:
+            return parser.unescape(post['sub'])
+
+        # TODO test for comment "..."
+        # return the first sentence of the post content
+        comment = parser.unescape(post['com'])
+        result = re.match(r'([^.:;?]+)', comment)
+        if result:
+            return result.group(0)
+
+        # fall back to the post id
+        return str(post['no'])
 
     @staticmethod
     def parse_json(board, json_):
@@ -66,6 +92,7 @@ class Thread:
                       first['no'],
                       HTMLParser().unescape(first['sub'])
                       if 'sub' in first else None,
+                      Thread._find_subject(first),
                       first['semantic_url'],
                       Posts([Post.parse_json(board, post)
                              for post in json_['posts']]))
