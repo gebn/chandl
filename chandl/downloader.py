@@ -213,8 +213,9 @@ class Downloader:
                       suffix='%(index)d/%(max)d - '
                              '%(elapsed_td)s elapsed, %(eta_td)s remaining')
             with _redirect_sigint():
-                while self._queue and not _interrupted:
-                    bar.goto(job_count - len(self._queue))
+                while len(self._completed_jobs) < job_count and \
+                        not _interrupted:
+                    bar.goto(len(self._completed_jobs))
                     time.sleep(.5)
 
         # wait for all threads to finish
