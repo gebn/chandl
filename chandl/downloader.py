@@ -177,12 +177,14 @@ class Downloader:
         for post_ in posts:
             self._queue.append(post_)
 
-    def download(self, posts):
+    def download(self, posts, show_progress=False):
         """
         Download the files contained within a list of posts.
 
         :param posts: An iterable containing the posts to download. They will
                       be downloaded in order.
+        :param show_progress: Whether to print a progress bar that updates as
+                              the thread is downloading. Defaults to false.
         """
         global _interrupted
         _interrupted = False
@@ -205,25 +207,27 @@ class Downloader:
             thread_pool.append(thread)
         logger.debug('All threads launched')
 
-        # print progress
-        bar = Bar('Downloading',
-                  max=job_count,
-                  suffix='%(index)d/%(max)d - '
-                         '%(elapsed_td)s elapsed, %(eta_td)s remaining')
-        with _redirect_sigint():
-            while self._queue and not _interrupted:
-                bar.goto(job_count - len(self._queue))
-                time.sleep(.5)
+        if show_progress:
+            bar = Bar('Downloading',
+                      max=job_count,
+                      suffix='%(index)d/%(max)d - '
+                             '%(elapsed_td)s elapsed, %(eta_td)s remaining')
+            with _redirect_sigint():
+                while self._queue and not _interrupted:
+                    bar.goto(job_count - len(self._queue))
+                    time.sleep(.5)
 
         # wait for all threads to finish
         for i in range(threads):
             thread_pool[i].join()
         finish = datetime.datetime.now()
 
-        # complete the progress bar if the queue is empty
-        if not self._queue:
-            bar.goto(job_count)
-        bar.finish()
+        if show_progress:
+            # complete the progress bar if the queue is empty
+            if not self._queue:
+                # noinspection PyUnboundLocalVariable
+                bar.goto(job_count)
+            bar.finish()
 
         remaining_jobs = list(self._queue)
         return DownloadResult(self._completed_jobs,

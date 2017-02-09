@@ -160,7 +160,7 @@ def main():
                                              os.path.relpath(write_dir,
                                                              os.getcwd())))
     downloader = Downloader(write_dir, args.name, args.parallelism)
-    print(downloader.download(posts))
+    print(downloader.download(posts, level >= logging.WARNING))
 
     return 0
 
