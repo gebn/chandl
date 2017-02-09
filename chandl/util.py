@@ -139,10 +139,19 @@ def unescape_html(html_):
     :param html_: The escaped HTML.
     :return: The input string with entities replaces.
     """
-    if sys.version_info.major == 3:
-        import html
-        return html.unescape(html_)
 
-    # noinspection PyUnresolvedReferences
-    from six.moves.html_parser import HTMLParser
-    return HTMLParser().unescape(html_)
+    # http://stackoverflow.com/a/2360639
+
+    if sys.version_info.major == 2:
+        # noinspection PyUnresolvedReferences
+        from six.moves.html_parser import HTMLParser
+        return HTMLParser().unescape(html_)
+
+    if sys.version_info.minor == 3:
+        import html.parser
+        # noinspection PyDeprecation
+        return html.parser.HTMLParser().unescape(html_)
+
+    # noinspection PyCompatibility
+    import html
+    return html.unescape(html_)
