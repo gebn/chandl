@@ -8,8 +8,6 @@ import base64
 import six
 import requests
 import shutil
-# noinspection PyUnresolvedReferences
-from six.moves.html_parser import HTMLParser
 
 from chandl import util
 
@@ -161,8 +159,7 @@ class File:
         if 'filename' not in json:
             raise ValueError('Post does not contain an image')
 
-        parser = HTMLParser()
-        return File(json['tim'], board, parser.unescape(json['filename']),
+        return File(json['tim'], board, util.unescape_html(json['filename']),
                     json['ext'][1:], json['fsize'], json['w'], json['h'],
                     unpack_hash(json['md5']).rstrip())
 

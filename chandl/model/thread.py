@@ -4,8 +4,6 @@ from __future__ import unicode_literals
 import logging
 import re
 import six
-# noinspection PyUnresolvedReferences
-from six.moves.html_parser import HTMLParser
 import requests
 
 from chandl import util
@@ -58,15 +56,14 @@ class Thread:
         :param post: The first post's json.
         :return: A string containing the thread's resolved subject.
         """
-        parser = HTMLParser()
 
         # if the post has a subject, it's easy
         if 'sub' in post:
-            return parser.unescape(post['sub'])
+            return util.unescape_html(post['sub'])
 
         # TODO test for comment "..."
         # return the first sentence of the post content
-        comment = parser.unescape(post['com'])
+        comment = util.unescape_html(post['com'])
         result = re.match(r'([^.:;?]+)', comment)
         if result:
             return result.group(0)
@@ -90,7 +87,7 @@ class Thread:
 
         return Thread(board,
                       first['no'],
-                      HTMLParser().unescape(first['sub'])
+                      util.unescape_html(first['sub'])
                       if 'sub' in first else None,
                       Thread._find_subject(first),
                       first['semantic_url'],

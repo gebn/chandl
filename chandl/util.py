@@ -130,3 +130,19 @@ def create_session():
     session = requests.Session()
     session.headers = headers
     return session
+
+
+def unescape_html(html_):
+    """
+    Replace HTML entities (e.g. `&pound;`) in a string.
+
+    :param html_: The escaped HTML.
+    :return: The input string with entities replaces.
+    """
+    if sys.version_info.major == 3:
+        import html
+        return html.unescape(html_)
+
+    # noinspection PyUnresolvedReferences
+    from six.moves.html_parser import HTMLParser
+    return HTMLParser().unescape(html_)

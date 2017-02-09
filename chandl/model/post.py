@@ -3,9 +3,8 @@ from __future__ import unicode_literals
 
 from datetime import datetime
 import six
-# noinspection PyUnresolvedReferences
-from six.moves.html_parser import HTMLParser
 
+from chandl import util
 from chandl.model.file import File
 
 
@@ -50,7 +49,7 @@ class Post:
         :return: The created post instance.
         """
         file_ = File.parse_json(board, json) if 'tim' in json else None
-        comment = HTMLParser().unescape(json['com']) if 'com' in json else None
+        comment = util.unescape_html(json['com']) if 'com' in json else None
         return Post(board, json['no'], datetime.utcfromtimestamp(json['time']),
                     comment, file_)
 

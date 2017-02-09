@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from unittest import TestCase
 from datetime import datetime
 
+from chandl import util
 from chandl.model.post import Post
 
 
@@ -73,7 +74,7 @@ class TestPost(TestCase):
                          datetime.utcfromtimestamp(self._POST['time']))
 
     def test_body(self):
-        self.assertEqual(self.post.body, self._POST['com'])
+        self.assertEqual(self.post.body, util.unescape_html(self._POST['com']))
 
     def test_no_body(self):
         self.assertIsNone(self.post_no_body.body)
@@ -95,5 +96,5 @@ class TestPost(TestCase):
                          'Post({0}, {1}, {2}, {3})'.format(
                              self._POST['no'],
                              str(datetime.utcfromtimestamp(self._POST['time'])),
-                             self._POST['com'],
+                             util.unescape_html(self._POST['com']),
                              str(self.post.file)))

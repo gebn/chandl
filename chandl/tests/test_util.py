@@ -89,7 +89,7 @@ class TestMakeFilename(unittest.TestCase):
     _UNICODE = {
         'Sîne klâwen durh': 'Sine klawen durh',
         'Τη γλώσσα μου έδωσαν': 'Te glossa mou edosan',
-        'ღმერთსი შემვედრე': 'gmertsi shemvedre'
+        'ღმერთსი შემვედრე': 'g\'mertsi shemvedre'
     }
 
     def test_none(self):
