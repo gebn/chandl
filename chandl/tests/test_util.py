@@ -151,3 +151,21 @@ class TestCreateSession(unittest.TestCase):
         self.assertIn('User-Agent', session.headers)
         self.assertEqual(session.headers['User-Agent'],
                          'chandl/' + chandl.__version__)
+
+
+class TestUnescapeHtml(unittest.TestCase):
+
+    def test_all_encoded(self):
+        self.assertEqual(
+            util.unescape_html('&#x46;&#x6F;&#x6F;&#x20;&#xA9;&#x20;&#x62;&#x61'
+                               ';&#x72;&#x20;&#x1D306;&#x20;&#x62;&#x61;&#x7A;&'
+                               '#x20;&#x2603;&#x20;&#x71;&#x75;&#x78;'),
+            'Foo © bar 𝌆 baz ☃ qux')
+
+    def test_exotic_characters(self):
+        self.assertEqual(
+            util.unescape_html('Foo &#xA9; bar &#x1D306; baz &#x2603; qux'),
+            'Foo © bar 𝌆 baz ☃ qux')
+
+    def test_named_reference(self):
+        self.assertEqual(util.unescape_html('&copy;'), '©')
