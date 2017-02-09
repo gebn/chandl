@@ -75,7 +75,7 @@ def make_filename(string):
     if string is None:
         raise ValueError('String cannot be None')
 
-    safe = [' ', '.', '_', '\'']
+    safe = [' ', '.', '_', '-', '\'']
     joined = ''.join([c for c in unidecode.unidecode(string)
                       if c.isalnum() or c in safe]).strip()
     if not joined:
