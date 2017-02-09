@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 import logging
 import re
 import six
+# noinspection PyUnresolvedReferences
+from six.moves.html_parser import HTMLParser
 import requests
 
 from chandl import util
@@ -62,7 +64,8 @@ class Thread:
 
         return Thread(board,
                       first['no'],
-                      first['sub'] if 'sub' in first else None,
+                      HTMLParser().unescape(first['sub'])
+                      if 'sub' in first else None,
                       first['semantic_url'],
                       Posts([Post.parse_json(board, post)
                              for post in json_['posts']]))
