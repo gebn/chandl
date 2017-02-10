@@ -7,7 +7,6 @@ import six
 import requests
 
 from chandl import util
-from chandl.model.posts import Posts
 from chandl.model.post import Post
 
 logger = logging.getLogger(__name__)
@@ -90,8 +89,8 @@ class Thread:
                       if 'sub' in first else None,
                       Thread._find_subject(first),
                       first['semantic_url'],
-                      Posts([Post.parse_json(board, post)
-                             for post in json_['posts']]))
+                      [Post.parse_json(board, post)
+                       for post in json_['posts']])
 
     @staticmethod
     def from_url(url, session=None):

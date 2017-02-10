@@ -79,18 +79,18 @@ def _construct_parser():
 def _remove_unwanted(posts, args):
 
     # filter out posts without a file
-    posts = posts.filter(lambda post: post.has_file)
+    posts = [post for post in posts if post.has_file]
     logger.debug('%d contain a file', len(posts))
 
     # filter out files of the wrong type
     if args.filter:
         extensions = file.expand_filters(args.filter)
-        posts = posts.filter(lambda post: post.file.extension in extensions)
+        posts = [post for post in posts if post.file.extension in extensions]
     logger.debug('%d are also of the desired format', len(posts))
 
     # filter out excluded file names
     filenames = util.expand_cli_args(args.exclude or [])
-    posts = posts.filter(lambda post: post.file.name not in filenames)
+    posts = [post for post in posts if post.file.name not in filenames]
     logger.debug('%d have also not been excluded', len(posts))
 
     return posts
