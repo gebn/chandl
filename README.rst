@@ -1,6 +1,8 @@
 chandl
 ======
 
+.. image:: https://img.shields.io/pypi/status/chandl.svg
+   :target: https://pypi.python.org/pypi/chandl
 .. image:: https://img.shields.io/pypi/v/chandl.svg
    :target: https://pypi.python.org/pypi/chandl
 .. image:: https://img.shields.io/pypi/pyversions/chandl.svg
