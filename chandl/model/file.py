@@ -70,7 +70,7 @@ class File:
         :param size: The size of the file in bytes.
         :param width: The width of the media in pixels.
         :param height: The height of the media in pixels.
-        :param md5: The MD5 hash of the file as a 32-character string.
+        :param md5: The MD5 hash of the file as a 32-character lowercase string.
         """
         self.id = id_
         self.board = board

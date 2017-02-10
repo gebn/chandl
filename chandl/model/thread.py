@@ -29,7 +29,7 @@ class Thread:
         :param title: A name for the thread, resolved from the subject, comment,
                       or thread id.
         :param slug: The thread's URL fragment.
-        :param posts: Posts within this thread.
+        :param posts: A list of posts in this thread.
         """
         self.board = board
         self.id = id_
