@@ -74,7 +74,7 @@ class File:
         """
         self.id = id_
         self.board = board
-        self.name = name[:30]  # the length of some file names causes problems
+        self.name = name
         self.extension = extension
         self.size = size
         self.width = width

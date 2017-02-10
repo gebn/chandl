@@ -56,13 +56,6 @@ class TestFile(unittest.TestCase):
     def test_name(self):
         self.assertEqual(self.file.name, TestPost.POST_JSON['filename'])
 
-    def test_long_name(self):
-        filename = 'long' * 10
-        file_json = copy.copy(TestPost.POST_JSON)
-        file_json['filename'] = filename
-        file_ = File.parse_json(TestPost.BOARD, file_json)
-        self.assertEqual(file_.name, filename[:30])
-
     def test_extension(self):
         self.assertEqual(self.file.extension, TestPost.POST_JSON['ext'][1:])
 
