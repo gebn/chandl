@@ -15,11 +15,10 @@ A lightweight tool for parsing and downloading 4chan threads.
 Features
 --------
 
--  An API for programmatically analysing 4chan content.
--  Customise the each file name using a lambda function.
--  Filter out images or videos.
--  Concurrent downloading, with parallelism linked to the number of
-   cores.
+-  A comprehensive API for programmatically analysing 4chan content.
+-  Concurrent downloading, with parallelism linked to the number of available cores.
+-  Override the file naming scheme and specify exclusions for thread downloads.
+-  Filter files by extension or category (e.g. images, videos).
 
 Installation
 ------------
