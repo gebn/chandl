@@ -158,6 +158,10 @@ class TestThread(unittest.TestCase):
         self.assertEqual(Thread.parse_json(self._BOARD, self._THREAD_JSON),
                          self._thread)
 
+    def test_parse_json_no_posts(self):
+        with self.assertRaises(ValueError):
+            Thread.parse_json(self._BOARD, {'posts': []})
+
     def test_str(self):
         self.assertEqual(str(self._thread),
                          'Thread({0}, {1})'.format(self._ID, self._BOARD))
