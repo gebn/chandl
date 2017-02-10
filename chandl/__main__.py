@@ -49,6 +49,7 @@ def _construct_parser():
                              'comma-separated or option passed multiple times',
                         action='append',
                         type=util.decode_cli_arg,
+                        default=[],
                         nargs='?')
     parser.add_argument('-o', '--output-dir',
                         help='the directory to create the `thread-dir` within',
@@ -89,7 +90,7 @@ def _remove_unwanted(posts, args):
     logger.debug('%d are also of the desired format', len(posts))
 
     # filter out excluded file names
-    filenames = util.expand_cli_args(args.exclude or [])
+    filenames = util.expand_cli_args(args.exclude)
     posts = [post for post in posts if post.file.name not in filenames]
     logger.debug('%d have also not been excluded', len(posts))
 
