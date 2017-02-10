@@ -61,7 +61,6 @@ class Thread:
         if 'sub' in post:
             return util.unescape_html(post['sub'])
 
-        # TODO test for comment "..."
         # return the first sentence of the post content
         comment = util.unescape_html(post['com'])
         result = re.match(r'([^.:;?]+)', comment)
@@ -124,6 +123,10 @@ class Thread:
             raise IOError('Request to 4chan failed with status code {0}'.format(
                 response.status_code))
         return Thread.parse_json(result.group(1), response.json())
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) \
+               and other.__dict__ == self.__dict__
 
     def __str__(self):
         return 'Thread({0}, {1})'.format(self.id, self.board)
