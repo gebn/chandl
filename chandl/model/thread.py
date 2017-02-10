@@ -66,7 +66,7 @@ class Thread:
         comment = util.unescape_html(post['com'])
         result = re.match(r'([^.:;?]+)', comment)
         if result:
-            return result.group(0)
+            return result.group(1)
 
         # fall back to the post id
         return str(post['no'])
