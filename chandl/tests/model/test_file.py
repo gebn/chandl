@@ -7,6 +7,8 @@ from chandl import util
 from chandl.model import file
 from chandl.model.file import File
 
+from chandl.tests.model.test_post import TestPost
+
 
 class TestExpandFilters(unittest.TestCase):
 
@@ -37,102 +39,62 @@ class TestExpandFilters(unittest.TestCase):
 
 class TestFile(unittest.TestCase):
 
-    _POST_NO_FILE = {
-        'no': 1978945,
-        'now': '11/23/16(Wed)04:52:24',
-        'name': 'Anonymous',
-        'com': '<a href=\"#p1978196\" class=\"quotelink\">&gt;&gt;1978196</a>'
-               '<br>This is some HTML.',
-        'time': 1479894744,
-        'resto': 1978004
-    }
-
-    _BOARD = 'wg'
-    _ID = 6840627
-
-    _POST_VALID = {
-        'bumplimit': 0,
-        'com': 'No more, no less',
-        'ext': '.jpg',
-        'filename': 'IMG_5433',
-        'fsize': 35649,
-        'h': 768,
-        'imagelimit': 0,
-        'images': 12,
-        'md5': '56yiIJJgznhqupf3uu2xuA==',
-        'name': 'Anonymous',
-        'no': 6840627,
-        'now': '02/02/17(Thu)01:25:15',
-        'replies': 20,
-        'resto': 0,
-        'semantic_url': 'monty-python-papes',
-        'sub': 'Monty Python Papes',
-        'tim': 1486016715106,
-        'time': 1486016715,
-        'tn_h': 140,
-        'tn_w': 250,
-        'unique_ips': 18,
-        'w': 1366
-    }
-
-    _POST_VALID_FILE_MD5 = 'e7aca2209260ce786aba97f7baedb1b8'
-    _POST_VALID_FILE_URL = 'https://i.4cdn.org/wg/1486016715106.jpg'
-
     @classmethod
     def setUpClass(cls):
-        cls.file = File(cls._POST_VALID['tim'], cls._BOARD,
-                        cls._POST_VALID['filename'], cls._POST_VALID['ext'][1:],
-                        cls._POST_VALID['fsize'], cls._POST_VALID['w'],
-                        cls._POST_VALID['h'], cls._POST_VALID_FILE_MD5)
+        cls.file = File(TestPost.POST_JSON['tim'], TestPost.BOARD,
+                        TestPost.POST_JSON['filename'],
+                        TestPost.POST_JSON['ext'][1:],
+                        TestPost.POST_JSON['fsize'], TestPost.POST_JSON['w'],
+                        TestPost.POST_JSON['h'], TestPost.POST_JSON_FILE_MD5)
 
     def test_id(self):
-        self.assertEqual(self.file.id, self._POST_VALID['tim'])
+        self.assertEqual(self.file.id, TestPost.POST_JSON['tim'])
 
     def test_board(self):
-        self.assertEqual(self.file.board, self._BOARD)
+        self.assertEqual(self.file.board, TestPost.BOARD)
 
     def test_name(self):
-        self.assertEqual(self.file.name, self._POST_VALID['filename'])
+        self.assertEqual(self.file.name, TestPost.POST_JSON['filename'])
 
     def test_long_name(self):
         filename = 'long' * 10
-        file_json = copy.copy(self._POST_VALID)
+        file_json = copy.copy(TestPost.POST_JSON)
         file_json['filename'] = filename
-        file_ = File.parse_json(self._BOARD, file_json)
+        file_ = File.parse_json(TestPost.BOARD, file_json)
         self.assertEqual(file_.name, filename[:30])
 
     def test_extension(self):
-        self.assertEqual(self.file.extension, self._POST_VALID['ext'][1:])
+        self.assertEqual(self.file.extension, TestPost.POST_JSON['ext'][1:])
 
     def test_size(self):
-        self.assertEqual(self.file.size, self._POST_VALID['fsize'])
+        self.assertEqual(self.file.size, TestPost.POST_JSON['fsize'])
 
     def test_width(self):
-        self.assertEqual(self.file.width, self._POST_VALID['w'])
+        self.assertEqual(self.file.width, TestPost.POST_JSON['w'])
 
     def test_height(self):
-        self.assertEqual(self.file.height, self._POST_VALID['h'])
+        self.assertEqual(self.file.height, TestPost.POST_JSON['h'])
 
     def test_md5(self):
-        self.assertEqual(self.file.md5, self._POST_VALID_FILE_MD5)
+        self.assertEqual(self.file.md5, TestPost.POST_JSON_FILE_MD5)
 
     def test_parse_json_no_file(self):
         with self.assertRaises(ValueError):
-            File.parse_json(self._BOARD, self._POST_NO_FILE)
+            File.parse_json(TestPost.BOARD, TestPost.POST_NO_FILE_JSON)
 
     def test_parse_json_file(self):
-        self.assertEqual(File.parse_json(self._BOARD, self._POST_VALID),
+        self.assertEqual(File.parse_json(TestPost.BOARD, TestPost.POST_JSON),
                          self.file)
 
     def test_url(self):
-        self.assertEqual(self.file.url, self._POST_VALID_FILE_URL)
+        self.assertEqual(self.file.url, TestPost.POST_JSON_FILE_URL)
 
     def test_str(self):
         self.assertEqual(str(self.file),
                          'File({0}, {1}.{2}, {3}, {4}x{5})'.format(
-                             self._POST_VALID['tim'],
-                             self._POST_VALID['filename'],
-                             self._POST_VALID['ext'][1:],
-                             util.bytes_fmt(self._POST_VALID['fsize']),
-                             self._POST_VALID['w'],
-                             self._POST_VALID['h']))
+                             TestPost.POST_JSON['tim'],
+                             TestPost.POST_JSON['filename'],
+                             TestPost.POST_JSON['ext'][1:],
+                             util.bytes_fmt(TestPost.POST_JSON['fsize']),
+                             TestPost.POST_JSON['w'],
+                             TestPost.POST_JSON['h']))

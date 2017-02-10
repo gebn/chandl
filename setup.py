@@ -32,7 +32,8 @@ setup(
         'six>=1.9.0',
         'Unidecode',
         'requests',
-        'progress'
+        'progress',
+        'pytz'
     ],
     test_suite='nose.collector',
     tests_require=[

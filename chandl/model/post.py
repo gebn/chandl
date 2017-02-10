@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from datetime import datetime
 import six
+import pytz
 
 from chandl import util
 from chandl.model.file import File
@@ -50,9 +51,16 @@ class Post:
         """
         file_ = File.parse_json(board, json) if 'tim' in json else None
         comment = util.unescape_html(json['com']) if 'com' in json else None
-        return Post(board, json['no'], datetime.utcfromtimestamp(json['time']),
+        return Post(board, json['no'],
+                    datetime.utcfromtimestamp(
+                        json['time']).replace(tzinfo=pytz.utc),
                     comment, file_)
 
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) \
+               and other.__dict__ == self.__dict__
+
     def __str__(self):
-        return 'Post({0}, {1}, {2}, {3})'.format(self.id, str(self.timestamp),
-                                                 self.body, self.file)
+        return 'Post({0}, {1}, {2})'.format(self.id,
+                                            str(self.timestamp),
+                                            self.file)
