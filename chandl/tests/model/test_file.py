@@ -121,7 +121,8 @@ class TestFile(fake_filesystem_unittest.TestCase):
         path = os.path.join(directory, name)
 
         self.fs.CreateFile(path, contents='corrupt content')
-        self.file.save_to(directory, name)
+        with HTTMock(response_content):
+            self.file.save_to(directory, name)
         self.assertEqual(util.md5_file(path), TestPost.POST.file.md5)
 
     def test_save_to_non_200(self):
