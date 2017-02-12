@@ -163,6 +163,10 @@ class TestThread(unittest.TestCase):
         with self.assertRaises(ValueError):
             Thread.parse_json(self._BOARD, {'posts': []})
 
+    def test_from_url_invalid_url(self):
+        with self.assertRaises(ValueError):
+            Thread.from_url('http://boards.4chan.org/thread/abcd')
+
     def test_str(self):
         self.assertEqual(str(self._thread),
                          'Thread({0}, {1})'.format(self._ID, self._BOARD))
