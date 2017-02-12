@@ -2,7 +2,9 @@
 from __future__ import unicode_literals
 import unittest
 import datetime
+import json
 import pytz
+from httmock import all_requests, response, HTTMock
 
 from chandl.model.file import File
 from chandl.model.post import Post
@@ -107,6 +109,8 @@ class TestThread(unittest.TestCase):
                   1080, '0dc598558addc4bc1a803a12e83e1eff'))
     ]
 
+    _VALID_URL = 'http://boards.4chan.org/wg/thread/6847183'
+
     @classmethod
     def setUpClass(cls):
         cls._thread = Thread(cls._BOARD, cls._ID, cls._SUBJECT, cls._TITLE,
@@ -166,6 +170,52 @@ class TestThread(unittest.TestCase):
     def test_from_url_invalid_url(self):
         with self.assertRaises(ValueError):
             Thread.from_url('http://boards.4chan.org/thread/abcd')
+
+    def test_from_url_404(self):
+        # noinspection PyUnusedLocal
+        @all_requests
+        def response_content(url, request):
+            return response(404)
+
+        with HTTMock(response_content), self.assertRaises(IOError):
+            Thread.from_url(self._VALID_URL)
+
+    def test_from_url_503(self):
+        # noinspection PyUnusedLocal
+        @all_requests
+        def response_content(url, request):
+            return response(403)
+
+        with HTTMock(response_content), self.assertRaises(IOError):
+            Thread.from_url(self._VALID_URL)
+
+    def test_from_url_invalid_json(self):
+        # noinspection PyUnusedLocal
+        @all_requests
+        def response_content(url, request):
+            return response(content='invalid json here')
+
+        with HTTMock(response_content), self.assertRaises(IOError):
+            Thread.from_url(self._VALID_URL)
+
+    def test_from_url_malformed_response(self):
+        # noinspection PyUnusedLocal
+        @all_requests
+        def response_content(url, request):
+            return response(content='{}')
+
+        with HTTMock(response_content), self.assertRaises(IOError):
+            Thread.from_url(self._VALID_URL)
+
+    def test_from_url(self):
+        # noinspection PyUnusedLocal
+        @all_requests
+        def response_content(url, request):
+            return response(content=json.dumps(self._THREAD_JSON))
+
+        with HTTMock(response_content):
+            self.assertEqual(Thread.from_url(self._VALID_URL),
+                             self._thread)
 
     def test_str(self):
         self.assertEqual(str(self._thread),
