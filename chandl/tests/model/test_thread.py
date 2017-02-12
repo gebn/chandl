@@ -62,7 +62,8 @@ class TestThread(unittest.TestCase):
                 'w': 1920
             },
             {
-                'com': '<a href="#p6840627" class="quotelink">&gt;&gt;6840627</a><br>All I have. Thanks for the sparrow one!',
+                'com': '<a href="#p6840627" class="quotelink">&gt;&gt;6840627</'
+                       'a><br>All I have. Thanks for the sparrow one!',
                 'ext': '.jpg',
                 'filename': '1475710924523',
                 'fsize': 74606,
