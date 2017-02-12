@@ -78,8 +78,8 @@ class Thread:
         :param json_: The thread's parsed JSON as a dictionary.
         :return: The created thread instance.
         """
-        if not json_['posts']:
-            raise ValueError('A thread must contain at least one post')
+        if 'posts' not in json_ or not json_['posts']:
+            raise ValueError('Thread does not contain any posts')
 
         first = json_['posts'][0]
 
@@ -121,7 +121,10 @@ class Thread:
         if response.status_code != requests.codes.ok:
             raise IOError('Request to 4chan failed with status code {0}'.format(
                 response.status_code))
-        return Thread.parse_json(result.group(1), response.json())
+        try:
+            return Thread.parse_json(result.group(1), response.json())
+        except ValueError as e:
+            raise IOError('Error parsing 4chan response: {0}'.format(e))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) \
