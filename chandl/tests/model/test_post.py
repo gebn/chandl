@@ -14,30 +14,37 @@ class TestPost(TestCase):
     BOARD = 'wg'
 
     POST_JSON = {
-        'no': 1978935,
-        'now': '11/23/16(Wed)03:54:11',
+        'no': 6849229,
+        'now': '02/11/17(Sat)21:33:46',
         'name': 'Anonymous',
+        'sub': 'Financial backgrounds',
         'com': '<a href=\"#p1978934\" class=\"quotelink\">&gt;&gt;1978934</a>'
                '<br>4/?',
-        'filename': '026 - 9pVmOxz',
+        'filename': 'wall_2',
         'ext': '.jpg',
-        'w': 1000,
-        'h': 1415,
-        'tn_w': 88,
-        'tn_h': 125,
-        'tim': 1479891251942,
-        'time': 1479891251,
-        'md5': 'mvAriHSBFWBZr6yQ5c15lg==',
-        'fsize': 787710,
-        'resto': 1978004
+        'w': 1200,
+        'h': 934,
+        'tn_w': 250,
+        'tn_h': 194,
+        'tim': 1486866826992,
+        'time': 1486866826,
+        'md5': 'iKLZQLYdEGgYi/xuNnd9nQ==',
+        'fsize': 270555,
+        'resto': 1978004,
+        'bumplimit': 0,
+        'imagelimit': 0,
+        'semantic_url': 'financial-backgrounds',
+        'replies': 2,
+        'images': 2,
+        'unique_ips': 1
     }
-    POST_JSON_FILE_MD5 = '9af02b887481156059afac90e5cd7996'
-    POST_JSON_FILE_URL = 'https://i.4cdn.org/wg/1479891251942.jpg'
+    POST_JSON_FILE_MD5 = '88a2d940b61d1068188bfc6e36777d9d'
+    POST_JSON_FILE_URL = 'https://i.4cdn.org/wg/1486866826992.jpg'
 
-    _POST = Post(BOARD, POST_JSON['no'],
-                 datetime.datetime(2016, 11, 23, 8, 54, 11, tzinfo=pytz.utc),
-                 '<a href=\"#p1978934\" class=\"quotelink\">>>1978934</a'
-                 '><br>4/?', File.parse_json(BOARD, POST_JSON))
+    POST = Post(BOARD, POST_JSON['no'],
+                datetime.datetime(2017, 2, 12, 2, 33, 46, tzinfo=pytz.utc),
+                '<a href=\"#p1978934\" class=\"quotelink\">>>1978934</a>'
+                '<br>4/?', File.parse_json(BOARD, POST_JSON))
 
     _POST_NO_BODY_JSON = {
         'no': 1978719,
@@ -78,44 +85,44 @@ class TestPost(TestCase):
                          'a><br>This is some HTML.')
 
     def test_board(self):
-        self.assertEqual(self._POST.board, self.BOARD)
+        self.assertEqual(self.POST.board, self.BOARD)
 
     def test_id(self):
-        self.assertEqual(self._POST.id, self.POST_JSON['no'])
+        self.assertEqual(self.POST.id, self.POST_JSON['no'])
 
     def test_timestamp(self):
-        self.assertEqual(self._POST.timestamp,
+        self.assertEqual(self.POST.timestamp,
                          datetime.datetime.utcfromtimestamp(
                              self.POST_JSON['time']).replace(tzinfo=pytz.utc))
 
     def test_body(self):
-        self.assertEqual(self._POST.body,
+        self.assertEqual(self.POST.body,
                          util.unescape_html(self.POST_JSON['com']))
 
     def test_no_body(self):
         self.assertIsNone(self._POST_NO_BODY.body)
 
     def test_file(self):
-        self.assertEqual(self._POST.id, self.POST_JSON['no'])
+        self.assertEqual(self.POST.id, self.POST_JSON['no'])
 
     def test_no_file(self):
         self.assertIsNone(self._POST_NO_FILE.file)
 
     def test_has_file_true(self):
-        self.assertTrue(self._POST.has_file)
+        self.assertTrue(self.POST.has_file)
 
     def test_has_file_false(self):
         self.assertFalse(self._POST_NO_FILE.has_file)
 
     def test_parse_json(self):
         self.assertEqual(Post.parse_json(self.BOARD, self.POST_JSON),
-                         self._POST)
+                         self.POST)
 
     def test_str(self):
         self.assertEqual(
-            str(self._POST),
+            str(self.POST),
             'Post({0}, {1}, {2})'.format(
                 self.POST_JSON['no'],
                 str(datetime.datetime.utcfromtimestamp(
                     self.POST_JSON['time']).replace(tzinfo=pytz.utc)),
-                str(self._POST.file)))
+                str(self.POST.file)))

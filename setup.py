@@ -34,7 +34,8 @@ setup(
         'requests',
         'httmock',
         'progress',
-        'pytz'
+        'pytz',
+        'pyfakefs'
     ],
     test_suite='nose.collector',
     tests_require=[

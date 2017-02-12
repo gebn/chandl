@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import unittest
-import copy
+import os
+from httmock import all_requests, response, HTTMock
+from pyfakefs import fake_filesystem_unittest
 
 from chandl import util
 from chandl.model import file
 from chandl.model.file import File
 
 from chandl.tests.model.test_post import TestPost
+
+_REAL_OPEN = open
 
 
 class TestExpandFilters(unittest.TestCase):
@@ -37,7 +41,9 @@ class TestExpandFilters(unittest.TestCase):
                          set(['webm', 'gif', 'jpg', 'png'] + file.TYPE_VIDEO))
 
 
-class TestFile(unittest.TestCase):
+class TestFile(fake_filesystem_unittest.TestCase):
+
+    _RESOURCES_DIR = os.path.join(os.path.dirname(__file__), 'resources')
 
     @classmethod
     def setUpClass(cls):
@@ -46,6 +52,9 @@ class TestFile(unittest.TestCase):
                         TestPost.POST_JSON['ext'][1:],
                         TestPost.POST_JSON['fsize'], TestPost.POST_JSON['w'],
                         TestPost.POST_JSON['h'], TestPost.POST_JSON_FILE_MD5)
+
+    def setUp(self):
+        self.setUpPyfakefs()
 
     def test_id(self):
         self.assertEqual(self.file.id, TestPost.POST_JSON['tim'])
@@ -81,6 +90,76 @@ class TestFile(unittest.TestCase):
 
     def test_url(self):
         self.assertEqual(self.file.url, TestPost.POST_JSON_FILE_URL)
+
+    def test_save_to_exists(self):
+        # to ensure it's not re-downloading, make any re-download fail by not
+        # configuring HTTMock
+
+        directory = '/tmp'
+        name = 'dl.jpg'
+        path = os.path.join(directory, name)
+
+        # copy real file to fakefs
+        with _REAL_OPEN(
+                os.path.join(self._RESOURCES_DIR,
+                             TestPost.POST.file.filename), 'rb') as real_file:
+            self.fs.CreateFile(path, contents=real_file.read())
+
+        self.file.save_to(directory, name)
+
+    def test_save_to_exists_md5_mismatch(self):
+        # noinspection PyUnusedLocal
+        @all_requests
+        def response_content(url, request):
+            with _REAL_OPEN(os.path.join(
+                    self._RESOURCES_DIR,
+                    TestPost.POST.file.filename), 'rb') as f:
+                return response(content=f.read(), stream=True)
+
+        directory = '/tmp'
+        name = 'corrupt.jpg'
+        path = os.path.join(directory, name)
+
+        self.fs.CreateFile(path, contents='corrupt content')
+        self.file.save_to(directory, name)
+        self.assertEqual(util.md5_file(path), TestPost.POST.file.md5)
+
+    def test_save_to_non_200(self):
+        # noinspection PyUnusedLocal
+        @all_requests
+        def response_content(url, request):
+            return response(404)
+
+        with HTTMock(response_content), self.assertRaises(IOError):
+            self.file.save_to(self._RESOURCES_DIR, self.file.filename)
+
+    def test_save_to_verify_mismatch(self):
+        # noinspection PyUnusedLocal
+        @all_requests
+        def response_content(url, request):
+            return response(content='corrupt content', stream=True)
+
+        with HTTMock(response_content), self.assertRaises(IOError):
+            self.fs.CreateDirectory(self._RESOURCES_DIR)
+            self.file.save_to(self._RESOURCES_DIR, 'dl.jpg')
+
+    def test_save_to_ok(self):
+        # noinspection PyUnusedLocal
+        @all_requests
+        def response_content(url, request):
+            with _REAL_OPEN(os.path.join(
+                    self._RESOURCES_DIR,
+                    TestPost.POST.file.filename), 'rb') as f:
+                return response(content=f.read(), stream=True)
+
+        with HTTMock(response_content):
+            self.fs.CreateDirectory(self._RESOURCES_DIR)
+            self.file.save_to(self._RESOURCES_DIR, 'dl.jpg')
+
+        self.assertEqual(
+            util.md5_file(os.path.join(self._RESOURCES_DIR,
+                                       'dl.jpg')),
+            TestPost.POST.file.md5)
 
     def test_str(self):
         self.assertEqual(str(self.file),
