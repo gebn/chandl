@@ -142,16 +142,18 @@ def unescape_html(html_):
 
     # http://stackoverflow.com/a/2360639
 
-    if sys.version_info.major == 2:
-        # noinspection PyUnresolvedReferences
-        from six.moves.html_parser import HTMLParser
+    if sys.version_info.major == 2:  # 2.7
+        # noinspection PyUnresolvedReferences,PyCompatibility
+        from HTMLParser import HTMLParser
         return HTMLParser().unescape(html_)
 
-    if sys.version_info.minor == 3:
-        import html.parser
+    if sys.version_info.minor == 3:  # 3.3
+        # noinspection PyCompatibility
+        from html.parser import HTMLParser
         # noinspection PyDeprecation
-        return html.parser.HTMLParser().unescape(html_)
+        return HTMLParser().unescape(html_)
 
+    # 3.4+
     # noinspection PyCompatibility
     import html
     return html.unescape(html_)
