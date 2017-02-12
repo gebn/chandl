@@ -9,6 +9,8 @@ chandl
    :target: https://pypi.python.org/pypi/chandl
 .. image:: https://travis-ci.org/gebn/chandl.svg?branch=master
    :target: https://travis-ci.org/gebn/chandl
+.. image:: https://scan.coverity.com/projects/11734/badge.svg
+   :target: https://scan.coverity.com/projects/gebn-chandl
 .. image:: https://coveralls.io/repos/github/gebn/chandl/badge.svg?branch=master
    :target: https://coveralls.io/github/gebn/chandl?branch=master
 
