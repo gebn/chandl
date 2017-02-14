@@ -25,7 +25,14 @@ def _print_error(msg):
     print(msg, file=sys.stderr)
 
 
-def _construct_parser():
+def _parse_args(args):
+    """
+    Interpret command line arguments.
+
+    :param args: `sys.argv`
+    :return: The populated argparse namespace.
+    """
+
     parser = argparse.ArgumentParser(prog='chandl',
                                      description='A lightweight tool for '
                                                  'parsing and downloading '
@@ -74,7 +81,7 @@ def _construct_parser():
     parser.add_argument('url',
                         type=util.decode_cli_arg,
                         help='the URL of the thread to download')
-    return parser
+    return parser.parse_args(args)
 
 
 def _remove_unwanted(posts, args):
@@ -104,8 +111,7 @@ def main(args):
     :param args: Command-line arguments.
     """
 
-    parser = _construct_parser()
-    args = parser.parse_args(args)
+    args = _parse_args(args)
 
     # sort out logging output and level
     level = util.log_level_from_vebosity(args.verbosity)
