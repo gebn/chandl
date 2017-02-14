@@ -97,13 +97,15 @@ def _remove_unwanted(posts, args):
     return posts
 
 
-def main():
+def main(args):
     """
     chandl's command-line entry point.
+
+    :param args: Command-line arguments.
     """
 
     parser = _construct_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(args)
 
     # sort out logging output and level
     level = util.log_level_from_vebosity(args.verbosity)
@@ -167,6 +169,6 @@ def main():
 
 
 if __name__ == '__main__':
-    status = main()
+    status = main(sys.argv)
     logger.debug('Exiting with status %d', status)
     sys.exit(status)
