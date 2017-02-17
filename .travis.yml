@@ -33,5 +33,5 @@ addons:
       description: A lightweight tool for parsing and downloading 4chan threads.
     notification_email: oss@gebn.co.uk
     build_command_prepend: ""
-    build_command: ""
+    build_command: cov-build --dir cov-int --no-command --fs-capture-search ./
     branch_pattern: master
