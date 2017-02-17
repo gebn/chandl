@@ -30,4 +30,8 @@ addons:
   coverity_scan:
     project:
       name: gebn/chandl
+      description: A lightweight tool for parsing and downloading 4chan threads.
+    notification_email: oss@gebn.co.uk
+    build_command_prepend: make clean
+    build_command: python -m compileall chandl
     branch_pattern: master
