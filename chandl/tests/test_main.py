@@ -24,7 +24,7 @@ class TestParseArgs(unittest.TestCase):
 
     _DUMMY_URL = 'https://boards.4chan.org/wg/thread/6851190'
 
-    def test_verbosity_missing(self):
+    def test_verbosity_implicit(self):
         self.assertEqual(main._parse_args([self._DUMMY_URL]).verbosity, 0)
 
     def test_verbosity_count(self):
