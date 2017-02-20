@@ -34,4 +34,4 @@ addons:
     notification_email: oss@gebn.co.uk
     build_command_prepend: COV_BUILD_OPTIONS='--no-command --fs-capture-search ./';COVERITY_SCAN_BUILD_COMMAND=
     build_command: dummy
-    branch_pattern: master
+    branch_pattern: coverity_scan
