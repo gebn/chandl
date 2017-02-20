@@ -36,7 +36,7 @@ To install ``chandl``, simply run:
 Examples
 --------
 
-Download all files in ``<thread_url>``, to a new directory named after the thread if possible, otherwise its raw id:
+Download all files in ``<thread_url>``. A new directory will be created, named after the thread if possible, otherwise its raw id:
 
 ::
 
