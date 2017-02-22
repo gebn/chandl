@@ -50,27 +50,23 @@ def _parse_args(args):
                              'times',
                         action='append',
                         type=util.decode_cli_arg,
-                        nargs='?')
+                        default=[])
     parser.add_argument('-e', '--exclude',
                         help='file names to exclude, value either '
                              'comma-separated or option passed multiple times',
                         action='append',
                         type=util.decode_cli_arg,
-                        default=[],
-                        nargs='?')
+                        default=[])
     parser.add_argument('-o', '--output-dir',
                         help='the directory to create the `thread-dir` within',
-                        nargs='?',
                         type=util.decode_cli_arg,
                         default=os.getcwd())
     parser.add_argument('-t', '--thread-dir',
                         help='relative to the `output-dir`, this will contain '
                              'downloaded files',
-                        type=util.decode_cli_arg,
-                        nargs='?')
+                        type=util.decode_cli_arg)
     parser.add_argument('-n', '--name',
                         help='the format to use for downloaded file names',
-                        nargs='?',
                         type=util.decode_cli_arg,
                         default='{file.id} - {file.name}.{file.extension}')
     parser.add_argument('-p', '--parallelism',
