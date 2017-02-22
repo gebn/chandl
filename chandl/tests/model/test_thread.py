@@ -18,7 +18,7 @@ class TestThread(unittest.TestCase):
             {
                 'bumplimit': 0,
                 'com': 'No more, no less',
-                'ext': '.jpg',
+                'ext': '.png',
                 'filename': 'IMG_5433',
                 'fsize': 35649,
                 'h': 768,
@@ -88,11 +88,11 @@ class TestThread(unittest.TestCase):
     _SUBJECT = 'Monty Python Papes'
     _TITLE = _SUBJECT
     _SLUG = 'monty-python-papes'
-    _POSTS = [
+    POSTS = [
         Post(_BOARD, 6840627,
              datetime.datetime(2017, 2, 2, 6, 25, 15, tzinfo=pytz.utc),
              'No more, no less',
-             File(1486016715106, _BOARD, 'IMG_5433', 'jpg', 35649, 1366,
+             File(1486016715106, _BOARD, 'IMG_5433', 'png', 35649, 1366,
                   768, 'e7aca2209260ce786aba97f7baedb1b8')),
         Post(_BOARD, 6841819,
              datetime.datetime(2017, 2, 3, 8, 43, 48, tzinfo=pytz.utc),
@@ -114,7 +114,7 @@ class TestThread(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls._thread = Thread(cls._BOARD, cls._ID, cls._SUBJECT, cls._TITLE,
-                             cls._SLUG, cls._POSTS)
+                             cls._SLUG, cls.POSTS)
 
     def test_url(self):
         self.assertEqual(

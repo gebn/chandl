@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import unittest
+import argparse
 import sys
 import os
 import contextlib
 import six
 
 from chandl import __main__ as main
+from chandl.tests.model.test_thread import TestThread
 
 
 @contextlib.contextmanager
@@ -124,3 +126,34 @@ class TestParseArgs(unittest.TestCase):
         self.assertEqual(
             main._parse_args([self._DUMMY_URL]).url,
             self._DUMMY_URL)
+
+
+class TestRemoveUnwanted(unittest.TestCase):
+
+    _NO_ARGS = argparse.Namespace(filter=[], exclude=[])
+
+    def test_no_posts_no_args(self):
+        self.assertListEqual(main._remove_unwanted([], self._NO_ARGS),
+                             [])
+
+    def test_posts_no_args(self):
+        self.assertListEqual(
+            main._remove_unwanted(TestThread.POSTS, self._NO_ARGS),
+            [post for post in TestThread.POSTS if post.has_file])
+
+    def test_posts_filter_png(self):
+        self.assertListEqual(
+            main._remove_unwanted(TestThread.POSTS,
+                                  argparse.Namespace(filter=['png'],
+                                                     exclude=[])),
+            [post for post in TestThread.POSTS
+             if post.has_file and post.file.extension == 'png'])
+
+    def test_posts_exclude_png(self):
+        name = '1475710924523.jpg'
+        self.assertListEqual(
+            main._remove_unwanted(TestThread.POSTS,
+                                  argparse.Namespace(filter=[],
+                                                     exclude=[name])),
+            [post for post in TestThread.POSTS
+             if post.has_file and post.file.name != name])
