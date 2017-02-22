@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import datetime
 import unittest
-import mock
 import os
 import signal
 
@@ -33,10 +32,9 @@ class TestRedirectSigint(unittest.TestCase):
         downloader._interrupted = False
 
     def test_interrupted(self):
-        handler = mock.MagicMock()
-        with downloader._redirect_sigint(handler):
+        with downloader._redirect_sigint():
             os.kill(os.getpid(), signal.SIGINT)
-        handler.assert_called_once()
+        self.assertTrue(downloader._interrupted)
 
 
 class TestDownloadResult(unittest.TestCase):

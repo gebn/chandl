@@ -32,7 +32,6 @@ setup(
         'six>=1.9.0',
         'Unidecode',
         'requests',
-        'mock',
         'httmock',
         'progress',
         'pytz',
