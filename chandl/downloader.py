@@ -36,13 +36,15 @@ def _handle_sigint(number, frame):
 
 
 @contextlib.contextmanager
-def _redirect_sigint():
+def _redirect_sigint(handler=_handle_sigint):
     """
     For the duration of this function, a SIGINT will call _handle_sigint()
     rather than the normal Python routine.
+
+    :param handler: The function to invoke if SIGINT is received.
     """
     original_handler = signal.getsignal(signal.SIGINT)
-    signal.signal(signal.SIGINT, _handle_sigint)
+    signal.signal(signal.SIGINT, handler)
     try:
         yield
     except:
