@@ -36,6 +36,10 @@ class TestRedirectSigint(unittest.TestCase):
             os.kill(os.getpid(), signal.SIGINT)
         self.assertTrue(downloader._interrupted)
 
+    def test_exception(self):
+        with self.assertRaises(ValueError), downloader._redirect_sigint():
+            raise ValueError()
+
 
 class TestDownloadResult(unittest.TestCase):
 
