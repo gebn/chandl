@@ -1,0 +1,5 @@
+pylint:
+  options:
+    max-args: 10
+pyroma:
+  run: true

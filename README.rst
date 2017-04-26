@@ -13,6 +13,8 @@ chandl
    :target: https://scan.coverity.com/projects/gebn-chandl
 .. image:: https://coveralls.io/repos/github/gebn/chandl/badge.svg?branch=master
    :target: https://coveralls.io/github/gebn/chandl?branch=master
+.. image:: https://landscape.io/github/gebn/chandl/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/gebn/chandl/master
 
 A lightweight tool for parsing and downloading 4chan threads.
 

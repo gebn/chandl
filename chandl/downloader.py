@@ -23,7 +23,6 @@ logger = logging.getLogger(__name__)
 _interrupted = False
 
 
-# noinspection PyUnusedLocal
 def _handle_sigint(number, frame):
     """
     Called when we receive a SIGINT.
@@ -31,6 +30,7 @@ def _handle_sigint(number, frame):
     :param number: The signal number (2 in this case).
     :param frame: The stack frame.
     """
+    del number, frame
     global _interrupted
     _interrupted = True
 
@@ -137,38 +137,40 @@ class Downloader:
 
         self._completed_jobs = []
 
+    # noinspection PyProtectedMember
     @staticmethod
-    def runner(self):
+    def runner(downloader):
         """
         A single thread's execution.
 
-        :param self: The downloader instance the thread belongs to.
+        :param downloader: The downloader instance the thread belongs to.
         """
         session = requests.Session()
         while not _interrupted:
             try:
-                post_ = self._queue.popleft()
-                Downloader.handle(self, post_, session)
+                post_ = downloader._queue.popleft()
+                Downloader.handle(downloader, post_, session)
             except IndexError:
                 # no items left to process - let function return
                 break
 
+    # noinspection PyProtectedMember
     @staticmethod
-    def handle(self, post_, session):
+    def handle(downloader, post_, session):
         """
         Downloads the file in a post.
 
-        :param self: The downloader context.
+        :param downloader: The downloader context.
         :param post_: The post to download.
         :param session: The requests session to use for the download.
         """
         try:
-            name = self._name_fmt.format(**post_.__dict__)
-            post_.file.save_to(self._directory, name, session=session)
-            with self._lock:
-                self._completed_jobs.append(post_)
+            name = downloader._name_fmt.format(**post_.__dict__)
+            post_.file.save_to(downloader._directory, name, session=session)
+            with downloader._lock:
+                downloader._completed_jobs.append(post_)
         except IOError as e:
-            logger.exception('Failed to write %s: %s', post_.file, e.message)
+            logger.exception('Failed to write %s: %s', post_.file, str(e))
 
     def _queue_all(self, posts):
         """
@@ -210,14 +212,14 @@ class Downloader:
         logger.debug('All threads launched')
 
         if show_progress:
-            bar = Bar('Downloading',
-                      max=job_count,
-                      suffix='%(index)d/%(max)d - '
-                             '%(elapsed_td)s elapsed, %(eta_td)s remaining')
+            progress = Bar('Downloading',
+                           max=job_count,
+                           suffix='%(index)d/%(max)d - %(elapsed_td)s elapsed, '
+                                  '%(eta_td)s remaining')
             with _redirect_sigint():
                 while len(self._completed_jobs) < job_count and \
                         not _interrupted:
-                    bar.goto(len(self._completed_jobs))
+                    progress.goto(len(self._completed_jobs))
                     time.sleep(.5)
 
         # wait for all threads to finish
@@ -229,8 +231,8 @@ class Downloader:
             # complete the progress bar if the queue is empty
             if not self._queue:
                 # noinspection PyUnboundLocalVariable
-                bar.goto(job_count)
-            bar.finish()
+                progress.goto(job_count)
+            progress.finish()
 
         remaining_jobs = list(self._queue)
         return DownloadResult(self._completed_jobs,
