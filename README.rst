@@ -95,4 +95,4 @@ Roadmap
 -------
 
 -  Implement tracking of threads until they are deleted
--  Improve test coverage
+-  Reach 90% test coverage
