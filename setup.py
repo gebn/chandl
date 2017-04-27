@@ -31,6 +31,7 @@ setup(
     install_requires=[
         'six>=1.9.0',
         'Unidecode',
+        'bleach',
         'requests',
         'httmock',
         'progress',

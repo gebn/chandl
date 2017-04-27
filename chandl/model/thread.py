@@ -5,6 +5,7 @@ import logging
 import re
 import six
 import requests
+import bleach
 
 from chandl import util
 from chandl.model.post import Post
@@ -60,8 +61,18 @@ class Thread:
         if 'sub' in post:
             return util.unescape_html(post['sub'])
 
-        # return the first sentence of the post content
-        comment = util.unescape_html(post['com'])
+        # we have to fall back on the comment
+        comment = post['com']
+
+        # only the first line is likely to be interesting
+        line_break = comment.find('<br>')  # do before decoding entities
+        if line_break != -1:
+            comment = comment[:line_break]
+
+        comment = bleach.clean(comment, tags=[], strip=True)
+        comment = util.unescape_html(comment)
+
+        # attempt to identify the first sentence
         result = re.match(r'([^.:;?]+)', comment)
         if result:
             return result.group(1)

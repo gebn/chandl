@@ -137,6 +137,13 @@ class TestThread(unittest.TestCase):
             }),
             '>> abcd ©£')
 
+    def test_find_subject_comment_line_break(self):
+        self.assertEqual(
+            Thread._find_subject({
+                'com': 'Hello<br>Goodbye'
+            }),
+            'Hello')
+
     def test_find_subject_comment_single_sentence(self):
         self.assertEqual(
             Thread._find_subject({
@@ -147,9 +154,17 @@ class TestThread(unittest.TestCase):
     def test_find_subject_comment_multiple_sentence(self):
         self.assertEqual(
             Thread._find_subject({
-                'com': 'this is the first - sentence. here\'s another'
+                'com': 'Let&#039;s go to Spain &amp; Portugal. here&#039;s '
+                       'another'
             }),
-            'this is the first - sentence')
+            'Let\'s go to Spain & Portugal')
+
+    def test_find_subject_comment_tags(self):
+        self.assertEqual(
+            Thread._find_subject({
+                'com': '<span class="quote">&gt;Foo. Bar</span><br>Baz'
+            }),
+            '>Foo')
 
     def test_find_subject_fallback(self):
         self.assertEqual(
