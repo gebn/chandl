@@ -211,14 +211,15 @@ class Downloader:
         for post_ in posts:
             self._queue.append(post_)
 
-    def download(self, posts, show_progress=False):
+    def download(self, posts, interactive=False):
         """
         Download the files contained within a list of posts.
 
         :param posts: An iterable containing the posts to download. They will
                       be downloaded in order.
-        :param show_progress: Whether to print a progress bar that updates as
-                              the thread is downloading. Defaults to false.
+        :param interactive: Whether to print a progress bar that updates as
+                            the thread is downloading, and display a message if
+                            the process is interrupted. Defaults to false.
         """
         global _interrupted
         _interrupted = False
@@ -241,7 +242,7 @@ class Downloader:
             thread_pool.append(thread)
         logger.debug('All threads launched')
 
-        if show_progress:
+        if interactive:
             progress = Bar('Downloading',
                            max=job_count,
                            suffix='%(index)d/%(max)d - %(elapsed_td)s elapsed, '
@@ -253,7 +254,9 @@ class Downloader:
                                   len(self._skipped_jobs))
                     time.sleep(.5)
 
-        if _interrupted:
+        if interactive and _interrupted:
+            # the act of C-c does not print a line break; we do not want a
+            # continuation of the previous line
             print(os.linesep + 'Interrupted; waiting for download threads to '
                                'finish their current jobs. This may take a few '
                                'seconds.', end='')
@@ -263,7 +266,7 @@ class Downloader:
             thread_pool[i].join()
         finish = datetime.datetime.now()
 
-        if show_progress:
+        if interactive:
             # complete the progress bar if the queue is empty
             if not self._queue:
                 # noinspection PyUnboundLocalVariable
