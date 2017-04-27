@@ -6,6 +6,8 @@ import os
 import argparse
 import logging
 
+import requests.packages.urllib3
+
 import chandl
 from chandl import util
 from chandl.downloader import Downloader
@@ -122,6 +124,9 @@ def main(args):
     handler.setLevel(level)
     handler.setFormatter(logging.Formatter('%(levelname)s %(message)s'))
     root.addHandler(handler)
+
+    if level != logging.DEBUG:
+        requests.packages.urllib3.disable_warnings()
 
     logger.debug(args)
 
