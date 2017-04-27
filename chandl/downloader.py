@@ -222,6 +222,11 @@ class Downloader:
                     progress.goto(len(self._completed_jobs))
                     time.sleep(.5)
 
+        if _interrupted:
+            print(os.linesep + 'Interrupted; waiting for download threads to '
+                               'finish their current jobs. This may take a few '
+                               'seconds.', end='')
+
         # wait for all threads to finish
         for i in range(threads):
             thread_pool[i].join()
