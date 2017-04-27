@@ -109,6 +109,8 @@ class File:
                        Defaults to true.
         :param session: The requests session to use for this download. If
                         omitted, a new session will be used.
+        :return: True if the file was skipped because it exists; False if it was
+                 downloaded successfully.
         :raise IOError: If the file could not be downloaded, written, or if
                         `verify` was enabled and its checksum did not match the
                         one reported by 4chan.
@@ -118,7 +120,7 @@ class File:
         if os.path.isfile(destination) and \
                 util.md5_file(destination) == self.md5:
             logger.debug('%s already exists; skipping download', self)
-            return
+            return True
 
         logger.debug('Downloading %s', self)
         if not session:
@@ -133,6 +135,8 @@ class File:
 
         if verify and util.md5_file(destination) != self.md5:
             raise IOError('Verify failed: checksum mismatch')
+
+        return False
 
     @staticmethod
     def parse_json(board, json):

@@ -43,25 +43,29 @@ class TestRedirectSigint(unittest.TestCase):
 
 class TestDownloadResult(unittest.TestCase):
 
-    _COMPLETED_JOBS = [post for post in TestThread.POSTS
-                       if post.has_file and post.file.extension == 'jpg']
+    _DOWNLOADED_JOBS = [post for post in TestThread.POSTS
+                        if post.has_file and post.file.extension == 'jpg']
+    _FAILED_JOBS = []
+    _SKIPPED_JOBS = []
     _REMAINING_JOBS = [post for post in TestThread.POSTS
                        if post.has_file and post.file.extension == 'png']
     _ELAPSED = datetime.timedelta(microseconds=98520934)
 
     @classmethod
     def setUpClass(cls):
-        cls.result = downloader.DownloadResult(cls._COMPLETED_JOBS,
+        cls.result = downloader.DownloadResult(cls._DOWNLOADED_JOBS,
+                                               cls._FAILED_JOBS,
+                                               cls._SKIPPED_JOBS,
                                                cls._REMAINING_JOBS,
                                                cls._ELAPSED)
 
     def test_posts_size(self):
         self.assertEqual(
-            downloader.DownloadResult._posts_size(self._COMPLETED_JOBS),
-            sum([post.file.size for post in self._COMPLETED_JOBS]))
+            downloader.DownloadResult._posts_size(self._DOWNLOADED_JOBS),
+            sum([post.file.size for post in self._DOWNLOADED_JOBS]))
 
     def test_str(self):
         self.assertEqual(str(self.result),
-                         '2/3 jobs completed, 1 remaining\n'
-                         '646.2 KiB/681.0 KiB downloaded, 34.8 KiB remaining\n'
+                         '2/3 jobs completed, 0 failed, 0 skipped\n'
+                         '646.2 KiB/681.0 KiB downloaded, 0.0 B skipped\n'
                          'Duration: 98.521 seconds (6.6 KiB/s)')

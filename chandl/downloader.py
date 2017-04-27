@@ -69,23 +69,40 @@ class DownloadResult:
         """
         return sum([post_.file.size for post_ in posts if post_.has_file])
 
-    def __init__(self, completed_jobs, remaining_jobs, elapsed):
+    def __init__(self, downloaded_jobs, failed_jobs, skipped_jobs,
+                 remaining_jobs, elapsed):
         """
         Initialise a new download result.
 
-        :param completed_jobs: A list of posts that downloaded successfully.
-        :param remaining_jobs: A list of posts that were not downloaded.
+        :param downloaded_jobs: A list of posts that downloaded successfully.
+        :param failed_jobs: A list of posts that failed to download.
+        :param skipped_jobs: A list of posts that were skipped because the file
+                             already existed.
+        :param remaining_jobs: Jobs yet to be processed when the download was
+                               cancelled.
         :param elapsed: A timedelta representing the duration of the download.
         """
-        self.downloaded_bytes = self._posts_size(completed_jobs)
+        self.downloaded_bytes = self._posts_size(downloaded_jobs)
+        self.failed_bytes = self._posts_size(failed_jobs)
+        self.skipped_bytes = self._posts_size(skipped_jobs)
         self.remaining_bytes = self._posts_size(remaining_jobs)
-        self.total_bytes = self.downloaded_bytes + self.remaining_bytes
+        self.total_bytes = self.downloaded_bytes + \
+            self.failed_bytes + \
+            self.skipped_bytes + \
+            self.remaining_bytes
 
-        self.completed_job_count = len(completed_jobs)
+        self.downloaded_job_count = len(downloaded_jobs)
+        self.failed_job_count = len(failed_jobs)
+        self.skipped_job_count = len(skipped_jobs)
         self.remaining_job_count = len(remaining_jobs)
-        self.total_jobs = self.completed_job_count + self.remaining_job_count
+        self.total_jobs = self.downloaded_job_count + \
+            self.failed_job_count + \
+            self.skipped_job_count + \
+            self.remaining_job_count
 
-        self.completed_jobs = completed_jobs
+        self.downloaded_jobs = downloaded_jobs
+        self.failed_jobs = failed_jobs
+        self.skipped_jobs = skipped_jobs
         self.remaining_jobs = remaining_jobs
         self.elapsed = elapsed
 
@@ -95,19 +112,20 @@ class DownloadResult:
 
         :return: The download statistics as a human-readable string.
         """
-        string = '{0}/{1} jobs completed, {2} remaining{3}'.format(
-            self.completed_job_count,
+        string = '{0}/{1} jobs completed, {2} failed, {3} skipped{4}'.format(
+            self.downloaded_job_count + self.skipped_job_count,
             self.total_jobs,
-            self.remaining_job_count,
+            self.failed_job_count,
+            self.skipped_job_count,
             os.linesep)
-        string += '{0}/{1} downloaded, {2} remaining{3}'.format(
+        string += '{0}/{1} downloaded, {2} skipped{3}'.format(
             util.bytes_fmt(self.downloaded_bytes),
             util.bytes_fmt(self.total_bytes),
-            util.bytes_fmt(self.remaining_bytes),
+            util.bytes_fmt(self.skipped_bytes),
             os.linesep)
         string += 'Duration: {0:0.3f} seconds ({1}/s)'.format(
             self.elapsed.total_seconds(),
-            util.bytes_fmt(int(self.downloaded_bytes //
+            util.bytes_fmt(int((self.downloaded_bytes + self.skipped_bytes) //
                                self.elapsed.total_seconds())))
         return string
 
@@ -133,9 +151,14 @@ class Downloader:
         self._threads = multiprocessing.cpu_count() * parallelism
         self._queue = collections.deque()
 
-        self._lock = threading.Lock()
+        self._downloaded_jobs_lock = threading.Lock()
+        self._downloaded_jobs = []
 
-        self._completed_jobs = []
+        self._failed_jobs_lock = threading.Lock()
+        self._failed_jobs = []
+
+        self._skipped_jobs_lock = threading.Lock()
+        self._skipped_jobs = []
 
     # noinspection PyProtectedMember
     @staticmethod
@@ -166,11 +189,18 @@ class Downloader:
         """
         try:
             name = downloader._name_fmt.format(**post_.__dict__)
-            post_.file.save_to(downloader._directory, name, session=session)
-            with downloader._lock:
-                downloader._completed_jobs.append(post_)
+            existed = post_.file.save_to(downloader._directory, name,
+                                         session=session)
+            if existed:
+                with downloader._skipped_jobs_lock:
+                    downloader._skipped_jobs.append(post_)
+            else:
+                with downloader._downloaded_jobs_lock:
+                    downloader._downloaded_jobs.append(post_)
         except IOError as e:
             logger.exception('Failed to write %s: %s', post_.file, str(e))
+            with downloader._failed_jobs_lock:
+                downloader._failed_jobs.append(post_)
 
     def _queue_all(self, posts):
         """
@@ -217,9 +247,10 @@ class Downloader:
                            suffix='%(index)d/%(max)d - %(elapsed_td)s elapsed, '
                                   '%(eta_td)s remaining')
             with _redirect_sigint():
-                while len(self._completed_jobs) < job_count and \
-                        not _interrupted:
-                    progress.goto(len(self._completed_jobs))
+                while self._queue and not _interrupted:
+                    progress.goto(len(self._downloaded_jobs) +
+                                  len(self._failed_jobs) +
+                                  len(self._skipped_jobs))
                     time.sleep(.5)
 
         if _interrupted:
@@ -239,7 +270,8 @@ class Downloader:
                 progress.goto(job_count)
             progress.finish()
 
-        remaining_jobs = list(self._queue)
-        return DownloadResult(self._completed_jobs,
-                              remaining_jobs,
+        return DownloadResult(self._downloaded_jobs,
+                              self._failed_jobs,
+                              self._skipped_jobs,
+                              list(self._queue),
                               finish - start)
