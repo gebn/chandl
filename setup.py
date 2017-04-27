@@ -62,7 +62,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'chandl = chandl.__main__:main',
+            'chandl = chandl.__main__:main_cli',
         ]
     }
 )

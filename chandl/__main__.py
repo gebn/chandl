@@ -84,7 +84,7 @@ def _parse_args(args):
     parser.add_argument('url',
                         type=util.decode_cli_arg,
                         help='the URL of the thread to download')
-    return parser.parse_args(args)
+    return parser.parse_args(args[1:])
 
 
 def _remove_unwanted(posts, args):
@@ -109,9 +109,9 @@ def _remove_unwanted(posts, args):
 
 def main(args):
     """
-    chandl's command-line entry point.
+    chandl's entry point.
 
-    :param args: Command-line arguments.
+    :param args: Command-line arguments, with the program in position 0.
     """
 
     args = _parse_args(args)
@@ -185,7 +185,16 @@ def main(args):
     return 0
 
 
-if __name__ == '__main__':
+def main_cli():
+    """
+    chandl's command-line entry point.
+
+    :return: The return code of the program.
+    """
     status = main(sys.argv)
-    logger.debug('Exiting with status %d', status)
-    sys.exit(status)
+    logger.debug('Returning exit status %d', status)
+    return status
+
+
+if __name__ == '__main__':
+    sys.exit(main_cli())
