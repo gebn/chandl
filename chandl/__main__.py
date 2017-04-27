@@ -150,7 +150,7 @@ def main(args):
         args.thread_dir = util.make_filename(thread.title)
 
     # create --thread-dir
-    write_dir = os.path.join(args.output_dir, args.thread_dir)
+    write_dir = os.path.abspath(os.path.join(args.output_dir, args.thread_dir))
     if not os.path.isdir(write_dir):
         try:
             os.mkdir(write_dir, 0o700)
@@ -160,10 +160,15 @@ def main(args):
                     write_dir, e))
             return 3
 
+    # show a relative path is there is a common directory (below root) between
+    # the `pwd` and the write_dir, otherwise show the absolute path
+    display_path = write_dir \
+        if os.path.dirname(os.path.commonprefix([write_dir,
+                                                 os.getcwd()])) == '/' \
+        else os.path.relpath(write_dir, os.getcwd())
+
     # download the files
-    print('Saving \'{0}\' to \'{1}\''.format(thread.title,
-                                             os.path.relpath(write_dir,
-                                                             os.getcwd())))
+    print('Saving \'{0}\' to \'{1}\''.format(thread.title, display_path))
     downloader = Downloader(write_dir, args.name, args.parallelism)
     print(downloader.download(posts, level >= logging.WARNING))
 
