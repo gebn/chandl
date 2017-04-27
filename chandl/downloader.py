@@ -259,7 +259,7 @@ class Downloader:
             # continuation of the previous line
             print(os.linesep + 'Interrupted; waiting for download threads to '
                                'finish their current jobs. This may take a few '
-                               'seconds.', end='')
+                               'seconds.')
 
         # wait for all threads to finish
         for i in range(threads):
