@@ -13,6 +13,9 @@ from chandl.model.thread import Thread
 from chandl.model import file
 
 
+# the default maximum number of download threads to use per core
+_DEFAULT_PARALLELISM = 2
+
 logger = logging.getLogger(__name__)
 
 
@@ -58,7 +61,8 @@ def _parse_args(args):
                         type=util.decode_cli_arg,
                         default=[])
     parser.add_argument('-o', '--output-dir',
-                        help='the directory to create the `thread-dir` within',
+                        help='the directory to create the `thread-dir` within; '
+                             'defaults to the present working directory',
                         type=util.decode_cli_arg,
                         default=os.getcwd())
     parser.add_argument('-t', '--thread-dir',
@@ -71,9 +75,10 @@ def _parse_args(args):
                         default='{file.id} - {file.name}.{file.extension}')
     parser.add_argument('-p', '--parallelism',
                         help='the maximum number of download threads to use '
-                             'per core',
+                             'per core; defaults to {0}'.format(
+                                 _DEFAULT_PARALLELISM),
                         type=int,
-                        default=2)
+                        default=_DEFAULT_PARALLELISM)
     parser.add_argument('url',
                         type=util.decode_cli_arg,
                         help='the URL of the thread to download')
