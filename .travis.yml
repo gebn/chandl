@@ -17,16 +17,6 @@ script:
  - coverage run setup.py test
 after_success:
  - coveralls
-deploy:
-  provider: pypi
-  user: gebn
-  password:
-    secure: Gd5M8NNgkZ6kY9yL1wvreIhRfYD0E4oI+G3k6H8jr8pSRoqJIkKFlqK7iZ8WjhDSKI358o5b+xnZSgaqEckl47MFA7bxMoI8aCWPhBAcUwk0SE+XdjUwIejuiXFukwrVS4iDTmKHKIjY6aAVJWHsGnCFgURjhPisMagmtkKh5pdiNQFo/uQ8B/nIEnUPYJ8JAZaZ7AhhZ5bJ4zcBu6GJAEzFpIwNaCvRKjurFombG1bwRVLzMqJrNhcnpQfXU63/nIhrKdIQMgJ2j2NGrpiuEsvCGYKEc3mXqGrGvgyIICh3s8KZVLEhEt6eVsNg3DegMm52B1rwWALsHsG3jBu7w2zBcx1iKW9/wLL/SSaHMU4sW0o/xOcHDkw3UjfcfrP56tzJWELeL6smdRkdQVBem5FvZdK+Ry62/9/lkYV6BrPvKJq23lYRMmO/tqtt16WX0e9gB96HNfn42O+j7/SG9PWMcTu6t64c9zvxdsY/SF3NC/iYa3xRkJG9NCikfsDGx1m8eMRUZR7PpL15QIs3yXRqDu7gvkviTM0Ih4COMGzAWANfdLhk7pxhAxebO7owqjosIO9nNbHVK/N6L2PO1VaX5K6dfjo0qWPk+d90xAo9vZWyUFuH9/sFPHKWpxXI1w769brNxW7n/V7BCWNgVzaogazLryVsEE3jZfsbg+4=
-  on:
-    tags: true
-    python: 2.7
-    distributions: sdist bdist_wheel
-    repo: gebn/chandl
 addons:
   coverity_scan:
     project:

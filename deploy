@@ -1,0 +1,15 @@
+#!/bin/bash
+
+trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+make clean
+python setup.py sdist bdist_wheel
+for file_path in "$DIR"/dist/*; do
+    echo "Signing $file_path..."
+    if gpg --detach-sign -a "$file_path"; then
+        echo "Uploading with signature to PyPi..."
+        twine upload "$file_path" "${file_path}.asc"
+    fi
+done
