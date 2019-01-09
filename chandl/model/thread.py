@@ -114,7 +114,7 @@ class Thread:
         :raises IOError: If the thread could not be retrieved from 4chan.
         """
         # extract the board and thread ids
-        result = re.search('boards\.4chan\.org/([a-z]+)/thread/([0-9]+)', url)
+        result = re.search(r'boards\.4chan\.org/([a-z]+)/thread/([0-9]+)', url)
         if not result:
             raise ValueError('Invalid thread URL: {0}'.format(url))
 
