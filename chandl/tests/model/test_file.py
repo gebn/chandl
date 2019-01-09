@@ -11,8 +11,6 @@ from chandl.model.file import File
 
 from chandl.tests.model.test_post import TestPost
 
-_REAL_OPEN = open
-
 
 class TestExpandFilters(unittest.TestCase):
 
@@ -44,6 +42,8 @@ class TestExpandFilters(unittest.TestCase):
 class TestFile(fake_filesystem_unittest.TestCase):
 
     _RESOURCES_DIR = os.path.join(os.path.dirname(__file__), 'resources')
+    _FAKE_DIR = '/tmp'
+    _FAKE_FILE = 'dl.jpg'
 
     @classmethod
     def setUpClass(cls):
@@ -55,6 +55,9 @@ class TestFile(fake_filesystem_unittest.TestCase):
 
     def setUp(self):
         self.setUpPyfakefs()
+        self.fs.add_real_file(
+                os.path.join(self._RESOURCES_DIR, TestPost.POST.file.filename),
+                target_path=os.path.join(self._FAKE_DIR, self._FAKE_FILE))
 
     def test_id(self):
         self.assertEqual(self.file.id, TestPost.POST_JSON['tim'])
@@ -94,26 +97,14 @@ class TestFile(fake_filesystem_unittest.TestCase):
     def test_save_to_exists(self):
         # to ensure it's not re-downloading, make any re-download fail by not
         # configuring HTTMock
-
-        directory = '/tmp'
-        name = 'dl.jpg'
-        path = os.path.join(directory, name)
-
-        # copy real file to fakefs
-        with _REAL_OPEN(
-                os.path.join(self._RESOURCES_DIR,
-                             TestPost.POST.file.filename), 'rb') as real_file:
-            self.fs.CreateFile(path, contents=real_file.read())
-
-        self.file.save_to(directory, name)
+        self.file.save_to(self._FAKE_DIR, self._FAKE_FILE)
 
     def test_save_to_exists_md5_mismatch(self):
         # noinspection PyUnusedLocal
         @all_requests
         def response_content(url, request):
-            with _REAL_OPEN(os.path.join(
-                    self._RESOURCES_DIR,
-                    TestPost.POST.file.filename), 'rb') as f:
+            with open(os.path.join(self._FAKE_DIR, self._FAKE_FILE),
+                      'rb') as f:
                 return response(content=f.read(), stream=True)
 
         directory = '/tmp'
@@ -148,9 +139,8 @@ class TestFile(fake_filesystem_unittest.TestCase):
         # noinspection PyUnusedLocal
         @all_requests
         def response_content(url, request):
-            with _REAL_OPEN(os.path.join(
-                    self._RESOURCES_DIR,
-                    TestPost.POST.file.filename), 'rb') as f:
+            with open(os.path.join(self._FAKE_DIR, self._FAKE_FILE),
+                      'rb') as f:
                 return response(content=f.read(), stream=True)
 
         with HTTMock(response_content):
