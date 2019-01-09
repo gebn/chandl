@@ -120,7 +120,7 @@ class TestFile(fake_filesystem_unittest.TestCase):
         name = 'corrupt.jpg'
         path = os.path.join(directory, name)
 
-        self.fs.CreateFile(path, contents='corrupt content')
+        self.fs.create_file(path, contents='corrupt content')
         with HTTMock(response_content):
             self.file.save_to(directory, name)
         self.assertEqual(util.md5_file(path), TestPost.POST.file.md5)
@@ -141,7 +141,7 @@ class TestFile(fake_filesystem_unittest.TestCase):
             return response(content='corrupt content', stream=True)
 
         with HTTMock(response_content), self.assertRaises(IOError):
-            self.fs.CreateDirectory(self._RESOURCES_DIR)
+            self.fs.create_dir(self._RESOURCES_DIR)
             self.file.save_to(self._RESOURCES_DIR, 'dl.jpg')
 
     def test_save_to_ok(self):
@@ -154,7 +154,7 @@ class TestFile(fake_filesystem_unittest.TestCase):
                 return response(content=f.read(), stream=True)
 
         with HTTMock(response_content):
-            self.fs.CreateDirectory(self._RESOURCES_DIR)
+            self.fs.create_dir(self._RESOURCES_DIR)
             self.file.save_to(self._RESOURCES_DIR, 'dl.jpg')
 
         self.assertEqual(
